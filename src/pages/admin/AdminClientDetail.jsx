@@ -4,7 +4,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = "http://localhost:5500/api";
+const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
 
 const AdminClientDetail = () => {
   const navigate = useNavigate();

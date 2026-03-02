@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 
-const API_BASE = "http://localhost:5500/api";
+const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
 
 const AdminCreateClient = () => {
   const { token } = useAuth();
