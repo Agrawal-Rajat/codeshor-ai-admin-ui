@@ -4,7 +4,7 @@ import API_BASE from "../../config";
 
 const DEFAULT_WIDGET_THEME = {
   widgetAssistantTitle: "Codeshor AI",
-  widgetLauncherText: "💬 Chat with us",
+  widgetLauncherIcon: "https://res.cloudinary.com/dgdqeidxb/image/upload/v1786316019/image_copy_r3mw8m.png",
   widgetChatBackgroundImage: "",
   widgetPrimaryColor: "#4f46e5",
   widgetSecondaryColor: "#6366f1",
@@ -35,7 +35,7 @@ const ClientWidgetSettings = () => {
           const config = data.data || {};
           setForm({
             widgetAssistantTitle: config.assistantTitle || DEFAULT_WIDGET_THEME.widgetAssistantTitle,
-            widgetLauncherText: config.launcherText || DEFAULT_WIDGET_THEME.widgetLauncherText,
+            widgetLauncherIcon: config.launcherIcon || DEFAULT_WIDGET_THEME.widgetLauncherIcon,
             widgetChatBackgroundImage: config.chatBackgroundImage || DEFAULT_WIDGET_THEME.widgetChatBackgroundImage,
             widgetPrimaryColor: config.primaryColor || DEFAULT_WIDGET_THEME.widgetPrimaryColor,
             widgetSecondaryColor: config.secondaryColor || DEFAULT_WIDGET_THEME.widgetSecondaryColor,
@@ -65,7 +65,7 @@ const ClientWidgetSettings = () => {
     const payload = {
       widgetConfig: {
         assistantTitle: form.widgetAssistantTitle,
-        launcherText: form.widgetLauncherText,
+        launcherIcon: form.widgetLauncherIcon,
         chatBackgroundImage: form.widgetChatBackgroundImage,
         primaryColor: form.widgetPrimaryColor,
         secondaryColor: form.widgetSecondaryColor,
@@ -118,8 +118,8 @@ const ClientWidgetSettings = () => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Launcher Text</label>
-              <input className="form-input" placeholder="e.g. Chat with Sales" value={form.widgetLauncherText} onChange={(e) => update("widgetLauncherText", e.target.value)} />
+              <label className="form-label">Launcher Icon URL</label>
+              <input className="form-input" placeholder="https://example.com/icon.png" value={form.widgetLauncherIcon} onChange={(e) => update("widgetLauncherIcon", e.target.value)} />
             </div>
 
             <div className="form-group">
@@ -222,9 +222,21 @@ const ClientWidgetSettings = () => {
               <div style={previewLauncherWrapStyle}>
                 <button style={{
                   ...previewLauncherStyle,
-                  background: `linear-gradient(135deg, ${form.widgetPrimaryColor}, ${form.widgetSecondaryColor})`
+                  background: `linear-gradient(135deg, ${form.widgetPrimaryColor}, ${form.widgetSecondaryColor})`,
+                  padding: "0",
+                  width: "60px",
+                  height: "60px",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden"
                 }}>
-                  {form.widgetLauncherText || DEFAULT_WIDGET_THEME.widgetLauncherText}
+                  <img 
+                    src={form.widgetLauncherIcon || DEFAULT_WIDGET_THEME.widgetLauncherIcon} 
+                    alt="Chat" 
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                  />
                 </button>
               </div>
 
