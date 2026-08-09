@@ -59,21 +59,41 @@ const ClientDashboard = () => {
       </div>
 
       <div className="glass-card">
-        <h3 className="glass-card-title">Monthly Usage</h3>
+        <h3 className="glass-card-title">Monthly Text Chat Usage</h3>
         <div className="form-grid-3">
           <div className="stat-card">
-            <span className="stat-label">Monthly Limit</span>
+            <span className="stat-label">Text Limit</span>
             <span className="stat-value" style={{ fontSize: "1.5rem" }}>{data.monthlyChatLimit}</span>
           </div>
 
           <div className="stat-card">
-            <span className="stat-label">Chats Used</span>
+            <span className="stat-label">Text Chats Used</span>
             <span className="stat-value" style={{ fontSize: "1.5rem", color: "#fca5a5" }}>{data.monthlyChatsUsed}</span>
           </div>
 
           <div className="stat-card">
             <span className="stat-label">Remaining</span>
             <span className="stat-value" style={{ fontSize: "1.5rem", color: "#86efac" }}>{data.remainingChats}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="glass-card">
+        <h3 className="glass-card-title">Monthly Voice Chat Usage</h3>
+        <div className="form-grid-3">
+          <div className="stat-card">
+            <span className="stat-label">Voice Limit</span>
+            <span className="stat-value" style={{ fontSize: "1.5rem" }}>{data.monthlyVoiceLimit}</span>
+          </div>
+
+          <div className="stat-card">
+            <span className="stat-label">Voice Chats Used</span>
+            <span className="stat-value" style={{ fontSize: "1.5rem", color: "#fca5a5" }}>{data.monthlyVoiceUsed}</span>
+          </div>
+
+          <div className="stat-card">
+            <span className="stat-label">Remaining</span>
+            <span className="stat-value" style={{ fontSize: "1.5rem", color: "#86efac" }}>{data.remainingVoice}</span>
           </div>
         </div>
       </div>
