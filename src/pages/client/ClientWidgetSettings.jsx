@@ -1,39 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import API_BASE from "../../config";
-
-const ONBOARDING_TEMPLATE = `Company Overview:
-- What does the business do?
-- What is unique about this business?
-
-Ideal Customer Profile:
-- Who should this assistant help?
-- Preferred locations/industries/customer type
-
-Primary Services (Detailed):
-- Service name + short description
-- Service deliverables + expected timeline
-
-Pricing & Plans:
-- Plan names, pricing, what is included
-- Any discount rules or package conditions
-
-Lead Qualification Rules:
-- What makes a lead high priority?
-- What details should always be captured?
-
-Escalation Rules:
-- When should assistant ask user to call/email team?
-- Any urgent-case routing instructions
-
-Business Policies:
-- Refund/cancellation policy
-- Support or response timelines
-
-Communication Style:
-- Brand voice/tone guidelines
-- Any words/claims assistant should avoid`;
 
 const DEFAULT_WIDGET_THEME = {
   widgetAssistantTitle: "Codeshor AI",
@@ -46,86 +13,46 @@ const DEFAULT_WIDGET_THEME = {
   widgetBotTextColor: "#111827",
 };
 
-const AdminEditClient = () => {
-  const { id } = useParams();
+const ClientWidgetSettings = () => {
   const { token } = useAuth();
-  const navigate = useNavigate();
-
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [previewMode, setPreviewMode] = useState("desktop");
 
   const update = (key, value) => setForm({ ...form, [key]: value });
 
-  const insertOnboardingTemplate = () => {
-    setForm((prev) => ({
-      ...prev,
-      additionalContext: prev.additionalContext?.trim()
-        ? `${prev.additionalContext.trim()}\n\n${ONBOARDING_TEMPLATE}`
-        : ONBOARDING_TEMPLATE,
-    }));
-  };
-
   useEffect(() => {
-    const fetchClient = async () => {
-      const res = await fetch(`${API_BASE}/admin/clients/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        const c = data.data;
-
-        setForm({
-          name: c.name || "",
-          domain: c.domain || "",
-          plan: c.plan || "STARTER",
-          languages: (c.languages || []).join(","),
-          services: c.businessProfile?.services || "",
-          pricing: c.businessProfile?.pricing || "",
-          faqs: c.businessProfile?.faqs || "",
-          testimonials: c.businessProfile?.testimonials || "",
-          additionalContext: c.businessProfile?.additionalContext || "",
-          phone: c.businessProfile?.contactInfo?.phone || "",
-          email: c.businessProfile?.contactInfo?.email || "",
-          address: c.businessProfile?.contactInfo?.address || "",
-          businessHours: c.businessProfile?.businessHours || "",
-          widgetAssistantTitle:
-            c.businessProfile?.widgetConfig?.assistantTitle ||
-            DEFAULT_WIDGET_THEME.widgetAssistantTitle,
-          widgetLauncherText:
-            c.businessProfile?.widgetConfig?.launcherText ||
-            DEFAULT_WIDGET_THEME.widgetLauncherText,
-          widgetChatBackgroundImage:
-            c.businessProfile?.widgetConfig?.chatBackgroundImage ||
-            DEFAULT_WIDGET_THEME.widgetChatBackgroundImage,
-          widgetPrimaryColor:
-            c.businessProfile?.widgetConfig?.primaryColor ||
-            DEFAULT_WIDGET_THEME.widgetPrimaryColor,
-          widgetSecondaryColor:
-            c.businessProfile?.widgetConfig?.secondaryColor ||
-            DEFAULT_WIDGET_THEME.widgetSecondaryColor,
-          widgetHeaderBackgroundColor:
-            c.businessProfile?.widgetConfig?.headerBackgroundColor ||
-            DEFAULT_WIDGET_THEME.widgetHeaderBackgroundColor,
-          widgetBotBubbleColor:
-            c.businessProfile?.widgetConfig?.botBubbleColor ||
-            DEFAULT_WIDGET_THEME.widgetBotBubbleColor,
-          widgetBotTextColor:
-            c.businessProfile?.widgetConfig?.botTextColor ||
-            DEFAULT_WIDGET_THEME.widgetBotTextColor,
-          widgetDefaultQuestions: c.businessProfile?.widgetConfig?.defaultQuestions || [],
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/client/widget-settings`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
+        const data = await res.json();
+        
+        if (data.success) {
+          const config = data.data || {};
+          setForm({
+            widgetAssistantTitle: config.assistantTitle || DEFAULT_WIDGET_THEME.widgetAssistantTitle,
+            widgetLauncherText: config.launcherText || DEFAULT_WIDGET_THEME.widgetLauncherText,
+            widgetChatBackgroundImage: config.chatBackgroundImage || DEFAULT_WIDGET_THEME.widgetChatBackgroundImage,
+            widgetPrimaryColor: config.primaryColor || DEFAULT_WIDGET_THEME.widgetPrimaryColor,
+            widgetSecondaryColor: config.secondaryColor || DEFAULT_WIDGET_THEME.widgetSecondaryColor,
+            widgetHeaderBackgroundColor: config.headerBackgroundColor || DEFAULT_WIDGET_THEME.widgetHeaderBackgroundColor,
+            widgetBotBubbleColor: config.botBubbleColor || DEFAULT_WIDGET_THEME.widgetBotBubbleColor,
+            widgetBotTextColor: config.botTextColor || DEFAULT_WIDGET_THEME.widgetBotTextColor,
+            widgetDefaultQuestions: config.defaultQuestions || [],
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch widget settings");
       }
-
       setLoading(false);
     };
 
-    fetchClient();
-  }, [id, token]);
+    fetchSettings();
+  }, [token]);
 
   const resetWidgetTheme = () => {
     setForm((prev) => ({
@@ -136,20 +63,6 @@ const AdminEditClient = () => {
 
   const handleSubmit = async () => {
     const payload = {
-      name: form.name,
-      domain: form.domain,
-      plan: form.plan,
-      languages: form.languages.split(","),
-      services: form.services,
-      pricing: form.pricing,
-      faqs: form.faqs,
-      testimonials: form.testimonials,
-      additionalContext: form.additionalContext,
-      contactInfo: {
-        phone: form.phone,
-        email: form.email,
-        address: form.address,
-      },
       widgetConfig: {
         assistantTitle: form.widgetAssistantTitle,
         launcherText: form.widgetLauncherText,
@@ -160,121 +73,38 @@ const AdminEditClient = () => {
         botBubbleColor: form.widgetBotBubbleColor,
         botTextColor: form.widgetBotTextColor,
         defaultQuestions: form.widgetDefaultQuestions,
-      },
-      businessHours: form.businessHours,
+      }
     };
 
-    const res = await fetch(`${API_BASE}/admin/clients/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const res = await fetch(`${API_BASE}/client/widget-settings`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (data.success) {
-      alert("Client updated successfully");
-      navigate(`/admin/clients`);
-    } else {
-      alert(data.message);
+      if (data.success) {
+        alert("Widget settings updated successfully!");
+      } else {
+        alert(data.message || "Failed to update widget settings");
+      }
+    } catch (err) {
+      alert("Failed to update widget settings");
     }
   };
 
-  if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading client data...</div>;
-  if (!form) return <div style={{ color: "white", padding: "2rem" }}>Client not found</div>;
+  if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading settings...</div>;
+  if (!form) return <div style={{ color: "white", padding: "2rem" }}>Error loading settings</div>;
 
   return (
     <div className="admin-page-container">
       <div className="admin-page-header">
-        <h2 className="admin-page-title">Edit Client: {form.name}</h2>
-      </div>
-
-      <div className="glass-card">
-        <h3 className="glass-card-title">Core Details</h3>
-        <div className="form-grid-3">
-          <div className="form-group">
-            <label className="form-label">Business Name</label>
-            <input className="form-input" placeholder="e.g. Acme Corp" value={form.name} onChange={(e) => update("name", e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Domain</label>
-            <input className="form-input" placeholder="acme.com" value={form.domain} onChange={(e) => update("domain", e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Subscription Plan</label>
-            <select className="form-select" value={form.plan} onChange={(e) => update("plan", e.target.value)}>
-              <option value="STARTER">STARTER</option>
-              <option value="PRO">PRO</option>
-              <option value="AGENCY">AGENCY</option>
-            </select>
-          </div>
-        </div>
-        <div className="form-group" style={{ marginTop: "1rem" }}>
-          <label className="form-label">Languages (comma separated)</label>
-          <input className="form-input" placeholder="en, es, fr" value={form.languages} onChange={(e) => update("languages", e.target.value)} />
-        </div>
-      </div>
-
-      <div className="glass-card">
-        <h3 className="glass-card-title">Contact Information</h3>
-        <div className="form-grid-2">
-          <div className="form-group">
-            <label className="form-label">Business Email</label>
-            <input className="form-input" placeholder="contact@acme.com" value={form.email} onChange={(e) => update("email", e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Phone Number</label>
-            <input className="form-input" placeholder="+1 (555) 000-0000" value={form.phone} onChange={(e) => update("phone", e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Physical Address</label>
-            <input className="form-input" placeholder="123 Startup Blvd, Tech City" value={form.address} onChange={(e) => update("address", e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Business Hours</label>
-            <input className="form-input" placeholder="Mon-Fri, 9am - 5pm EST" value={form.businessHours} onChange={(e) => update("businessHours", e.target.value)} />
-          </div>
-        </div>
-      </div>
-
-      <div className="glass-card">
-        <h3 className="glass-card-title">Business Profile (AI Knowledge Base)</h3>
-        
-        <div className="form-group">
-          <label className="form-label">Products & Services</label>
-          <textarea className="form-textarea" placeholder="Describe the core offerings..." value={form.services} onChange={(e) => update("services", e.target.value)} />
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">Pricing Strategy</label>
-          <textarea className="form-textarea" placeholder="Detail the pricing plans and costs..." value={form.pricing} onChange={(e) => update("pricing", e.target.value)} />
-        </div>
-
-        <div className="form-grid-2">
-          <div className="form-group">
-            <label className="form-label">Frequently Asked Questions (FAQs)</label>
-            <textarea className="form-textarea" placeholder="Q: What is your refund policy?&#10;A: We offer a 30-day money back guarantee." value={form.faqs} onChange={(e) => update("faqs", e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Testimonials / Reviews</label>
-            <textarea className="form-textarea" placeholder="Customer reviews that the AI can reference..." value={form.testimonials} onChange={(e) => update("testimonials", e.target.value)} />
-          </div>
-        </div>
-
-        <div className="template-box">
-          <h4>Need help structuring the knowledge base?</h4>
-          <p>Use our standardized Onboarding Template to ensure the AI receives high-quality, perfectly structured context about this business.</p>
-          <button className="btn-secondary" onClick={insertOnboardingTemplate}>Inject Template</button>
-          <div className="template-preview">{ONBOARDING_TEMPLATE}</div>
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">Additional Context / Custom Rules</label>
-          <textarea className="form-textarea" style={{minHeight: "250px"}} placeholder="Paste the onboarding template or write custom instructions here..." value={form.additionalContext} onChange={(e) => update("additionalContext", e.target.value)} />
-        </div>
+        <h2 className="admin-page-title">Widget Settings</h2>
       </div>
 
       <div className="glass-card">
@@ -515,4 +345,4 @@ const previewUserBubbleStyle = {
   boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
 };
 
-export default AdminEditClient;
+export default ClientWidgetSettings;

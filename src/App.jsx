@@ -8,12 +8,14 @@ import ClientLeads from "./pages/client/ClientLeads";
 import ClientConversations from "./pages/client/ClientConversations";
 import ConversationDetail from "./pages/client/ConversationDetail";
 import ClientPlan from "./pages/client/ClientPlan";
+import ClientKnowledgeGaps from "./pages/client/ClientKnowledgeGaps";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminClients from "./pages/admin/AdminClients";
 import AdminUsage from "./pages/admin/AdminUsage";
 import AdminClientDetail from "./pages/admin/AdminClientDetail";
 import AdminCreateClient from "./pages/admin/AdminCreateClient";
 import AdminEditClient from "./pages/admin/AdminEditClient";
+import ClientWidgetSettings from "./pages/client/ClientWidgetSettings";
 
 function App() {
   return (
@@ -50,6 +52,8 @@ function App() {
             <Route path="leads" element={<ClientLeads />} />
             <Route path="plan" element={<ClientPlan />} />
             <Route path="conversations" element={<ClientConversations />} />
+            <Route path="knowledge-gaps" element={<ClientKnowledgeGaps />} />
+            <Route path="widget" element={<ClientWidgetSettings />} />
             <Route
               path="conversations/:sessionId"
               element={<ConversationDetail />}

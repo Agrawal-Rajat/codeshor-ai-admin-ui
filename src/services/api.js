@@ -1,4 +1,4 @@
-const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
+import API_BASE from "../config";
 
 export const createClient = async (payload) => {
     const res = await fetch(`${API_BASE}/clients`, {

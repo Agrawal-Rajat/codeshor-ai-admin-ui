@@ -1,4 +1,4 @@
-import { Link, useNavigate, Outlet } from "react-router-dom";
+import { NavLink, useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 const AppLayout = ({ children }) => {
@@ -11,78 +11,59 @@ const AppLayout = ({ children }) => {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div className="app-layout-wrapper">
       {/* Sidebar */}
-      <div
-        style={{
-          width: "220px",
-          background: "#111827",
-          color: "white",
-          padding: "20px",
-        }}
-      >
-        <h3>Codeshor AI</h3>
+      <div className="glass-sidebar">
+        <h3 className="sidebar-title">Codeshor AI</h3>
 
         {user?.role === "ADMIN" && (
-          <>
-            <Link to="/admin" style={linkStyle}>
+          <div style={{ flex: 1 }}>
+            <NavLink to="/admin" end className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Overview
-            </Link>
-            <Link to="/admin/clients" style={linkStyle}>
+            </NavLink>
+            <NavLink to="/admin/clients" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Clients
-            </Link>
-            <Link to="/admin/usage" style={linkStyle}>
+            </NavLink>
+            <NavLink to="/admin/usage" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Usage
-            </Link>
-          </>
+            </NavLink>
+          </div>
         )}
 
         {user?.role === "CLIENT" && (
-          <>
-            <Link to="/client" style={linkStyle}>
+          <div style={{ flex: 1 }}>
+            <NavLink to="/client" end className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Dashboard
-            </Link>
-            <Link to="/client/leads" style={linkStyle}>
+            </NavLink>
+            <NavLink to="/client/leads" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Leads
-            </Link>
-            <Link to="/client/conversations" style={linkStyle}>
+            </NavLink>
+            <NavLink to="/client/conversations" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Conversations
-            </Link>
-            <Link to="/client/plan" style={linkStyle}>
+            </NavLink>
+            <NavLink to="/client/knowledge-gaps" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+              Knowledge Gaps
+            </NavLink>
+            <NavLink to="/client/plan" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Plan
-            </Link>
-          </>
+            </NavLink>
+            <NavLink to="/client/widget" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+              Widget Settings
+            </NavLink>
+          </div>
         )}
 
-        <button
-          onClick={handleLogout}
-          style={{
-            marginTop: "20px",
-            background: "#ef4444",
-            color: "white",
-            border: "none",
-            padding: "8px",
-            width: "100%",
-            cursor: "pointer",
-          }}
-        >
-          Logout
+        <button className="logout-btn" onClick={handleLogout}>
+          Sign Out
         </button>
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: "30px" }}>
+      <div className="main-content">
         <Outlet />
       </div>
     </div>
   );
-};
-
-const linkStyle = {
-  display: "block",
-  color: "white",
-  textDecoration: "none",
-  margin: "10px 0",
 };
 
 export default AppLayout;

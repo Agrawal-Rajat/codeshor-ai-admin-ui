@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
-
-const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
+import API_BASE from "../../config";
 
 const AdminOverview = () => {
   const { token } = useAuth();
@@ -32,33 +31,33 @@ const AdminOverview = () => {
     fetchOverview();
   }, [token]);
 
-  if (loading) return <div>Loading overview...</div>;
-  if (!data) return <div>No data available</div>;
+  if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading overview...</div>;
+  if (!data) return <div style={{ color: "white", padding: "2rem" }}>No data available</div>;
 
   return (
-    <div>
-      <h2>Admin Overview</h2>
-
-      <div style={cardStyle}>
-        <strong>Total Clients:</strong> {data.totalClients}
+    <div className="admin-page-container">
+      <div className="admin-page-header">
+        <h2 className="admin-page-title">Admin Overview</h2>
       </div>
 
-      <div style={cardStyle}>
-        <strong>Active Clients:</strong> {data.activeClients}
-      </div>
+      <div className="form-grid-3">
+        <div className="stat-card">
+          <span className="stat-label">Total Clients</span>
+          <span className="stat-value">{data.totalClients}</span>
+        </div>
 
-      <div style={cardStyle}>
-        <strong>Total Chats Used:</strong> {data.totalChatsUsed}
+        <div className="stat-card">
+          <span className="stat-label">Active Clients</span>
+          <span className="stat-value">{data.activeClients}</span>
+        </div>
+
+        <div className="stat-card">
+          <span className="stat-label">Total Chats Used</span>
+          <span className="stat-value">{data.totalChatsUsed}</span>
+        </div>
       </div>
     </div>
   );
-};
-
-const cardStyle = {
-  background: "#f3f4f6",
-  padding: "15px",
-  marginBottom: "10px",
-  borderRadius: "6px",
 };
 
 export default AdminOverview;

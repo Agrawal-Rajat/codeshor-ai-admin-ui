@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { Link } from "react-router-dom";
+import API_BASE from "../../config";
 
-const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
-
+ 
 const AdminClients = () => {
   const { token } = useAuth();
   const [clients, setClients] = useState([]);
@@ -48,49 +48,62 @@ const AdminClients = () => {
     }
   };
 
-  if (loading) return <div>Loading clients...</div>;
+  if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading clients...</div>;
 
   return (
-    <div>
-      <h2>All Clients</h2>
-
-      <Link to="/admin/clients/create">
-        <button>Create New Client</button>
-      </Link>
+    <div className="admin-page-container">
+      <div className="admin-page-header">
+        <h2 className="admin-page-title">All Clients</h2>
+        <Link to="/admin/clients/create" style={{ textDecoration: 'none' }}>
+          <button className="btn-primary">+ Create New Client</button>
+        </Link>
+      </div>
 
       {clients.length === 0 ? (
-        <div>No clients found</div>
+        <div className="glass-card">No clients found</div>
       ) : (
-        <table style={{ width: "100%", marginTop: "20px" }}>
-          <thead>
-            <tr>
-              <th align="left">Name</th>
-              <th align="left">Domain</th>
-              <th align="left">Plan</th>
-              <th align="left">Status</th>
-              <th align="left">Created</th>
-              <th align="left">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clients.map((client) => (
-              <tr key={client._id}>
-                <td>
-                  <Link to={`/admin/clients/${client._id}`}>{client.name}</Link>
-                </td>
-                <td>{client.domain}</td>
-                <td>{client.plan}</td>
-                <td>{client.isActive ? "Active" : "Suspended"}</td>
-                <td>{new Date(client.createdAt).toLocaleDateString()}</td>
-                <td>
-                  <button onClick={() => toggleStatus(client._id)}>
-                    {client.isActive ? "Suspend" : "Activate"}
-                  </button>
-                </td>
+        <div className="glass-table-container">
+          <table className="glass-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Domain</th>
+                <th>Plan</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {clients.map((client) => (
+                <tr key={client._id}>
+                  <td>
+                    <Link to={`/admin/clients/${client._id}`} style={{ color: '#a5b4fc', fontWeight: 600, textDecoration: 'none' }}>
+                      {client.name}
+                    </Link>
+                  </td>
+                  <td>{client.domain}</td>
+                  <td>
+                    <span className={`badge ${client.plan === 'AGENCY' ? 'badge-success' : 'badge-info'}`}>
+                      {client.plan}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`badge ${client.isActive ? 'badge-success' : 'badge-danger'}`}>
+                      {client.isActive ? "Active" : "Suspended"}
+                    </span>
+                  </td>
+                  <td>{new Date(client.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <button className="btn-secondary" onClick={() => toggleStatus(client._id)}>
+                      {client.isActive ? "Suspend" : "Activate"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

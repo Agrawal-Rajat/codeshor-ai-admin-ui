@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
-
-const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
+import API_BASE from "../../config";
 
 const AdminUsage = () => {
   const { token } = useAuth();
@@ -32,43 +31,55 @@ const AdminUsage = () => {
     fetchUsage();
   }, [token]);
 
-  if (loading) return <div>Loading usage...</div>;
+  if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading usage...</div>;
 
   return (
-    <div>
-      <h2>Client Usage Analytics</h2>
+    <div className="admin-page-container">
+      <div className="admin-page-header">
+        <h2 className="admin-page-title">Client Usage Analytics</h2>
+      </div>
 
       {clients.length === 0 ? (
-        <div>No clients found</div>
+        <div className="glass-card">No clients found</div>
       ) : (
-        <table style={{ width: "100%", marginTop: "20px" }}>
-          <thead>
-            <tr>
-              <th align="left">Name</th>
-              <th align="left">Plan</th>
-              <th align="left">Status</th>
-              <th align="left">Limit</th>
-              <th align="left">Used</th>
-              <th align="left">Remaining</th>
-              <th align="left">Tokens</th>
-              <th align="left">AI Cost (USD)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clients.map((client) => (
-              <tr key={client.id}>
-                <td>{client.name}</td>
-                <td>{client.plan}</td>
-                <td>{client.isActive ? "Active" : "Suspended"}</td>
-                <td>{client.monthlyChatLimit}</td>
-                <td>{client.monthlyChatsUsed}</td>
-                <td>{client.remainingChats}</td>
-                <td>{client.totalTokensUsed}</td>
-                <td>₹{(client.totalCostINR || 0).toFixed(2)}</td>
+        <div className="glass-table-container">
+          <table className="glass-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Plan</th>
+                <th>Status</th>
+                <th>Limit</th>
+                <th>Used</th>
+                <th>Remaining</th>
+                <th>Tokens</th>
+                <th>AI Cost (USD)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {clients.map((client) => (
+                <tr key={client.id}>
+                  <td style={{ fontWeight: 600, color: '#f1f5f9' }}>{client.name}</td>
+                  <td>
+                    <span className={`badge ${client.plan === 'AGENCY' ? 'badge-success' : 'badge-info'}`}>
+                      {client.plan}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`badge ${client.isActive ? 'badge-success' : 'badge-danger'}`}>
+                      {client.isActive ? "Active" : "Suspended"}
+                    </span>
+                  </td>
+                  <td>{client.monthlyChatLimit}</td>
+                  <td style={{ color: '#fca5a5' }}>{client.monthlyChatsUsed}</td>
+                  <td style={{ color: '#86efac' }}>{client.remainingChats}</td>
+                  <td style={{ fontFamily: 'monospace' }}>{client.totalTokensUsed}</td>
+                  <td>₹{(client.totalCostINR || 0).toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

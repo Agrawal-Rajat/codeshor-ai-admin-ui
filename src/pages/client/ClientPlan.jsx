@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
-
-const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
+import API_BASE from "../../config";
 
 const plans = [
   { name: "STARTER", limit: 100 },
@@ -68,56 +67,86 @@ const ClientPlan = () => {
     }
   };
 
-  if (loading) return <div>Loading plan...</div>;
+  if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading plan...</div>;
 
   return (
-    <div>
-      <h2>Subscription Plan</h2>
-
-      <div style={{ marginBottom: "20px" }}>
-        <strong>Current Plan:</strong> {currentPlan}
+    <div className="admin-page-container">
+      <div className="admin-page-header">
+        <h2 className="admin-page-title">Subscription Plan</h2>
       </div>
 
-      {usage && (
-        <div style={{ marginBottom: "20px" }}>
-          <div>Monthly Limit: {usage.monthlyChatLimit}</div>
-          <div>Used: {usage.monthlyChatsUsed}</div>
-          <div>Remaining: {usage.remainingChats}</div>
+      <div className="glass-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <h3 style={{ margin: "0 0 0.5rem 0", color: "#f1f5f9" }}>Current Plan</h3>
+          <span className={`badge ${currentPlan === 'AGENCY' ? 'badge-success' : 'badge-info'}`} style={{ fontSize: "1rem", padding: "0.5rem 1rem" }}>
+            {currentPlan}
+          </span>
         </div>
-      )}
-
-      <h3>Available Plans</h3>
-
-      {plans.map((plan) => (
-        <div
-          key={plan.name}
-          style={{
-            border: "1px solid #ddd",
-            padding: "15px",
-            marginBottom: "10px",
-            borderRadius: "6px",
-            background: plan.name === currentPlan ? "#e0f2fe" : "white",
-          }}
-        >
-          <div>
-            <strong>{plan.name}</strong>
+        
+        {usage && (
+          <div style={{ display: "flex", gap: "2rem", textAlign: "right" }}>
+            <div>
+              <div style={{ color: "#94a3b8", fontSize: "0.85rem", textTransform: "uppercase" }}>Monthly Limit</div>
+              <div style={{ color: "#f1f5f9", fontSize: "1.25rem", fontWeight: 600 }}>{usage.monthlyChatLimit}</div>
+            </div>
+            <div>
+              <div style={{ color: "#94a3b8", fontSize: "0.85rem", textTransform: "uppercase" }}>Chats Used</div>
+              <div style={{ color: "#fca5a5", fontSize: "1.25rem", fontWeight: 600 }}>{usage.monthlyChatsUsed}</div>
+            </div>
+            <div>
+              <div style={{ color: "#94a3b8", fontSize: "0.85rem", textTransform: "uppercase" }}>Remaining</div>
+              <div style={{ color: "#86efac", fontSize: "1.25rem", fontWeight: 600 }}>{usage.remainingChats}</div>
+            </div>
           </div>
-          <div>Monthly Chat Limit: {plan.limit}</div>
+        )}
+      </div>
 
-          {plan.name !== currentPlan && (
-            <button
-              onClick={() => upgradePlan(plan.name)}
-              style={{ marginTop: "10px" }}
-            >
-              Upgrade
-            </button>
-          )}
+      <h3 style={{ color: "#e2e8f0", marginBottom: "1.5rem" }}>Available Plans</h3>
+      <div className="form-grid-3">
+        {plans.map((plan) => (
+          <div
+            key={plan.name}
+            className="glass-card"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              marginBottom: 0,
+              border: plan.name === currentPlan ? "2px solid #818cf8" : "1px solid rgba(255, 255, 255, 0.08)",
+              background: plan.name === currentPlan ? "rgba(99, 102, 241, 0.1)" : "rgba(17, 24, 39, 0.6)"
+            }}
+          >
+            <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#f1f5f9", marginBottom: "0.5rem" }}>
+              {plan.name}
+            </div>
+            <div style={{ color: "#94a3b8", marginBottom: "2rem" }}>
+              Up to {plan.limit} chats / month
+            </div>
 
-          {plan.name === currentPlan && (
-            <div style={{ marginTop: "10px" }}>Current Plan</div>
-          )}
-        </div>
-      ))}
+            <div style={{ marginTop: "auto" }}>
+              {plan.name !== currentPlan ? (
+                <button
+                  className="btn-primary"
+                  style={{ width: "100%" }}
+                  onClick={() => upgradePlan(plan.name)}
+                >
+                  Upgrade to {plan.name}
+                </button>
+              ) : (
+                <div style={{
+                  background: "rgba(129, 140, 248, 0.2)",
+                  color: "#a5b4fc",
+                  textAlign: "center",
+                  padding: "0.875rem 1.5rem",
+                  borderRadius: "8px",
+                  fontWeight: 600
+                }}>
+                  Current Plan
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { Link } from "react-router-dom";
-
-const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
+import API_BASE from "../../config";
 
 const ClientConversations = () => {
   const { token } = useAuth();
@@ -33,41 +32,45 @@ const ClientConversations = () => {
     fetchConversations();
   }, [token]);
 
-  if (loading) return <div>Loading conversations...</div>;
+  if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading conversations...</div>;
 
   return (
-    <div>
-      <h2>Conversations</h2>
+    <div className="admin-page-container">
+      <div className="admin-page-header">
+        <h2 className="admin-page-title">Chat Conversations</h2>
+      </div>
 
       {conversations.length === 0 ? (
-        <div>No conversations yet</div>
+        <div className="glass-card">No conversations yet</div>
       ) : (
-        <table style={{ width: "100%", marginTop: "20px" }}>
-          <thead>
-            <tr>
-              <th align="left">Lead Name</th>
-              <th align="left">Email</th>
-              <th align="left">Session ID</th>
-              <th align="left">Date</th>
-              <th align="left">View</th>
-            </tr>
-          </thead>
-          <tbody>
-            {conversations.map((conv) => (
-              <tr key={conv.sessionId}>
-                <td>{conv.leadName}</td>
-                <td>{conv.leadEmail}</td>
-                <td>{conv.sessionId}</td>
-                <td>{new Date(conv.createdAt).toLocaleString()}</td>
-                <td>
-                  <Link to={`/client/conversations/${conv.sessionId}`}>
-                    View
-                  </Link>
-                </td>
+        <div className="glass-table-container">
+          <table className="glass-table">
+            <thead>
+              <tr>
+                <th>Lead Name</th>
+                <th>Email</th>
+                <th>Session ID</th>
+                <th>Date</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {conversations.map((conv) => (
+                <tr key={conv.sessionId}>
+                  <td style={{ fontWeight: 600, color: '#f1f5f9' }}>{conv.leadName || "Anonymous"}</td>
+                  <td style={{ color: '#93c5fd' }}>{conv.leadEmail || "-"}</td>
+                  <td style={{ fontFamily: 'monospace', color: '#94a3b8' }}>{conv.sessionId.substring(0, 8)}...</td>
+                  <td style={{ color: '#94a3b8' }}>{new Date(conv.createdAt).toLocaleString()}</td>
+                  <td>
+                    <Link to={`/client/conversations/${conv.sessionId}`}>
+                      <button className="btn-secondary" style={{ padding: "0.5rem 1rem" }}>View Chat</button>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

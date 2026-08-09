@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import API_BASE from "../config";
 
 const AuthContext = createContext();
-
-const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

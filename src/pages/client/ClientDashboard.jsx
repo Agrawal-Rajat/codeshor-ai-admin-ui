@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
-
-const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
+import API_BASE from "../../config";
 
 const ClientDashboard = () => {
   const { token } = useAuth();
@@ -32,46 +31,54 @@ const ClientDashboard = () => {
     fetchDashboard();
   }, [token]);
 
-  if (loading) return <div>Loading dashboard...</div>;
-
-  if (!data) return <div>No data available</div>;
+  if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading dashboard...</div>;
+  if (!data) return <div style={{ color: "white", padding: "2rem" }}>No data available</div>;
 
   return (
-    <div>
-      <h2>Client Dashboard</h2>
-
-      <div style={cardStyle}>
-        <strong>Plan:</strong> {data.plan}
+    <div className="admin-page-container">
+      <div className="admin-page-header">
+        <h2 className="admin-page-title">Client Dashboard</h2>
+        <span className={`badge ${data.plan === 'AGENCY' ? 'badge-success' : 'badge-info'}`}>
+          {data.plan} PLAN
+        </span>
       </div>
 
-      <div style={cardStyle}>
-        <strong>Total Leads:</strong> {data.totalLeads}
+      <div className="glass-card">
+        <h3 className="glass-card-title">Performance Overview</h3>
+        <div className="form-grid-2">
+          <div className="stat-card">
+            <span className="stat-label">Total Leads Captured</span>
+            <span className="stat-value" style={{ color: "#818cf8" }}>{data.totalLeads}</span>
+          </div>
+
+          <div className="stat-card">
+            <span className="stat-label">Total Conversations</span>
+            <span className="stat-value">{data.totalConversations}</span>
+          </div>
+        </div>
       </div>
 
-      <div style={cardStyle}>
-        <strong>Total Conversations:</strong> {data.totalConversations}
-      </div>
+      <div className="glass-card">
+        <h3 className="glass-card-title">Monthly Usage</h3>
+        <div className="form-grid-3">
+          <div className="stat-card">
+            <span className="stat-label">Monthly Limit</span>
+            <span className="stat-value" style={{ fontSize: "1.5rem" }}>{data.monthlyChatLimit}</span>
+          </div>
 
-      <div style={cardStyle}>
-        <strong>Monthly Chat Limit:</strong> {data.monthlyChatLimit}
-      </div>
+          <div className="stat-card">
+            <span className="stat-label">Chats Used</span>
+            <span className="stat-value" style={{ fontSize: "1.5rem", color: "#fca5a5" }}>{data.monthlyChatsUsed}</span>
+          </div>
 
-      <div style={cardStyle}>
-        <strong>Chats Used:</strong> {data.monthlyChatsUsed}
-      </div>
-
-      <div style={cardStyle}>
-        <strong>Remaining Chats:</strong> {data.remainingChats}
+          <div className="stat-card">
+            <span className="stat-label">Remaining</span>
+            <span className="stat-value" style={{ fontSize: "1.5rem", color: "#86efac" }}>{data.remainingChats}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
-const cardStyle = {
-  background: "#f3f4f6",
-  padding: "15px",
-  marginBottom: "10px",
-  borderRadius: "6px",
 };
 
 export default ClientDashboard;

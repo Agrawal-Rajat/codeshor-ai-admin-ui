@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
-
-const API_BASE = "https://codeshor-ai-backend.onrender.com/api";
+import API_BASE from "../config";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -36,25 +35,35 @@ const Login = () => {
   };
 
   return (
-    <div style={{ padding: "40px", maxWidth: "400px" }}>
-      <h2>Login</h2>
+    <div className="auth-container">
+      <div className="glass-card auth-card">
+        <h2 className="admin-page-title" style={{ textAlign: "center", marginBottom: "2rem" }}>Codeshor AI</h2>
+        
+        <div className="form-group">
+          <label className="form-label">Email</label>
+          <input
+            className="form-input"
+            placeholder="admin@codeshor.ai"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ width: "100%", marginBottom: "10px" }}
-      />
+        <div className="form-group" style={{ marginBottom: "2rem" }}>
+          <label className="form-label">Password</label>
+          <input
+            className="form-input"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ width: "100%", marginBottom: "10px" }}
-      />
-
-      <button onClick={handleLogin}>Login</button>
+        <button className="btn-primary" style={{ width: "100%" }} onClick={handleLogin}>
+          Sign In
+        </button>
+      </div>
     </div>
   );
 };
