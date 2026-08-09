@@ -32,6 +32,28 @@ const ClientConversations = () => {
     fetchConversations();
   }, [token]);
 
+  const handleDeleteConversation = async (sessionId) => {
+    if (!window.confirm("Are you sure you want to delete this conversation?")) return;
+    try {
+      const res = await fetch(`${API_BASE}/client/conversations/${sessionId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setConversations((prev) => prev.filter((c) => c.sessionId !== sessionId));
+      } else {
+        alert(data.message || "Failed to delete conversation");
+      }
+    } catch (err) {
+      console.error("Error deleting conversation:", err);
+      alert("Error deleting conversation");
+    }
+  };
+
+
   if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading conversations...</div>;
 
   return (
@@ -62,9 +84,18 @@ const ClientConversations = () => {
                   <td style={{ fontFamily: 'monospace', color: '#94a3b8' }}>{conv.sessionId.substring(0, 8)}...</td>
                   <td style={{ color: '#94a3b8' }}>{new Date(conv.createdAt).toLocaleString()}</td>
                   <td>
-                    <Link to={`/client/conversations/${conv.sessionId}`}>
-                      <button className="btn-secondary" style={{ padding: "0.5rem 1rem" }}>View Chat</button>
-                    </Link>
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      <Link to={`/client/conversations/${conv.sessionId}`}>
+                        <button className="btn-secondary" style={{ padding: "0.5rem 1rem" }}>View Chat</button>
+                      </Link>
+                      <button 
+                        className="btn-danger" 
+                        style={{ padding: "0.5rem 1rem", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "0.25rem", cursor: "pointer" }}
+                        onClick={() => handleDeleteConversation(conv.sessionId)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

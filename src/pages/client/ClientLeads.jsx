@@ -31,6 +31,28 @@ const ClientLeads = () => {
     fetchLeads();
   }, [token]);
 
+  const handleDeleteLead = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this lead?")) return;
+    try {
+      const res = await fetch(`${API_BASE}/client/leads/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setLeads((prev) => prev.filter((l) => l._id !== id));
+      } else {
+        alert(data.message || "Failed to delete lead");
+      }
+    } catch (err) {
+      console.error("Error deleting lead:", err);
+      alert("Error deleting lead");
+    }
+  };
+
+
   if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading leads...</div>;
 
   return (
@@ -50,6 +72,7 @@ const ClientLeads = () => {
                 <th>Email</th>
                 <th>Source</th>
                 <th>Date Captured</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -61,7 +84,17 @@ const ClientLeads = () => {
                     <span className="badge badge-info">{lead.source}</span>
                   </td>
                   <td style={{ color: '#94a3b8' }}>{new Date(lead.createdAt).toLocaleString()}</td>
+                  <td>
+                    <button 
+                      className="btn-danger" 
+                      style={{ padding: "0.25rem 0.5rem", fontSize: "0.875rem", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "0.25rem", cursor: "pointer" }}
+                      onClick={() => handleDeleteLead(lead._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
+
               ))}
             </tbody>
           </table>
