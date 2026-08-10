@@ -12,20 +12,20 @@ const LandingPage = () => {
 
   const faqs = [
     {
-      q: "How does Codeshor AI prevent hallucinations and wrong answers?",
-      a: "Codeshor AI uses RAG (Retrieval-Augmented Generation) powered by GPT-4o-mini and Pinecone Vector Database. It is strictly constrained to answer questions using ONLY your verified business context. If the answer isn't in your knowledge base, it politely directs the client to contact you."
+      q: "How does Codeshor AI prevent hallucinations?",
+      a: "Codeshor AI uses RAG (Retrieval-Augmented Generation) powered by GPT-4o-mini and Pinecone Vector Search. It strictly answers using ONLY your verified business data. If the answer isn't in your knowledge base, it politely directs the client to contact you."
     },
     {
       q: "How do Voice Interactions work in the chatbot?",
-      a: "Visitors can simply tap the microphone icon in the chat widget to record a voice note. Codeshor AI transcribes the audio in real-time, extracts the intent, and replies with accurate text and voice responses."
+      a: "Visitors tap the microphone icon in the chat widget to record a voice note. Codeshor AI transcribes the audio in real-time, extracts the intent, and replies with accurate text and voice responses."
     },
     {
-      q: "What happens when the AI doesn't know the answer to a question?",
-      a: "The question is automatically flagged in your Admin Dashboard under 'Knowledge Gaps'. You can review the exact query, type the correct answer, and click 'Train AI'—making your bot permanently smarter for future visitors."
+      q: "What happens when the AI doesn't know the answer?",
+      a: "The question is automatically logged in your Admin Dashboard under 'Knowledge Gaps'. You can review the query, add the answer, and click 'Train AI'—making your bot permanently smarter for future visitors."
     },
     {
       q: "Can I embed Codeshor AI on any website platform?",
-      a: "Yes! Codeshor AI works universally on WordPress, Shopify, Webflow, Wix, React, Next.js, or plain HTML. Simply copy and paste a single `<script>` tag into your site."
+      a: "Yes! Works universally on WordPress, Shopify, Webflow, Wix, React, Next.js, or plain HTML. Simply copy and paste a single `<script>` tag into your site."
     },
     {
       q: "How fast can I get started?",
@@ -35,16 +35,19 @@ const LandingPage = () => {
 
   return (
     <div className="lp-root">
-      {/* Background Lighting Elements */}
+      {/* Ambient Glow Backgrounds */}
       <div className="lp-ambient-glow lp-ambient-1"></div>
       <div className="lp-ambient-glow lp-ambient-2"></div>
-      <div className="lp-ambient-glow lp-ambient-3"></div>
 
-      {/* Top Banner Announcement */}
+      {/* Luxury Top House Banner */}
       <div className="lp-top-banner">
-        <div className="lp-house-badge animate-pulse-glow">
-          <span className="lp-house-prefix">from the House of</span>
-          <span className="lp-house-brand">C O D E S H O R</span>
+        <div className="lp-house-badge-container">
+          <div className="lp-house-badge">
+            <span className="lp-house-icon">🏛️</span>
+            <span className="lp-house-prefix">From the House of</span>
+            <span className="lp-house-brand">C O D E S H O R</span>
+            <span className="lp-house-sparkle">✨</span>
+          </div>
         </div>
       </div>
 
@@ -91,22 +94,22 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <header className="lp-hero lp-container">
-        <div className="lp-hero-pill animate-fade-up">
+        <div className="lp-hero-pill">
           <span className="lp-pill-sparkle">✨</span>
           <span>Next-Gen Autonomous AI Assistant for B2B SaaS</span>
         </div>
 
-        <h1 className="lp-hero-title animate-fade-up" style={{ animationDelay: '0.1s' }}>
+        <h1 className="lp-hero-title">
           Turn Website Visitors Into <br className="lp-br-desktop" />
           <span className="lp-text-gradient">Paying Customers 24/7</span>
         </h1>
 
-        <p className="lp-hero-subtitle animate-fade-up" style={{ animationDelay: '0.2s' }}>
+        <p className="lp-hero-subtitle">
           Deploy an intelligent, voice-enabled AI assistant in under 2 minutes. 
           Zero hallucinations, instant lead capture, and automated customer support that gets smarter every day.
         </p>
 
-        <div className="lp-hero-cta-group animate-fade-up" style={{ animationDelay: '0.3s' }}>
+        <div className="lp-hero-cta-group">
           <Link to="/login" className="lp-btn lp-btn-primary lp-btn-lg">
             Start 14-Day Free Trial
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -117,7 +120,7 @@ const LandingPage = () => {
         </div>
 
         {/* Live Mockup Demo Card */}
-        <div className="lp-hero-mockup-wrapper animate-fade-up" style={{ animationDelay: '0.4s' }}>
+        <div className="lp-hero-mockup-wrapper">
           <div className="lp-mockup-card">
             <div className="lp-mockup-header">
               <div className="lp-mockup-dots">
@@ -125,7 +128,7 @@ const LandingPage = () => {
                 <span className="dot yellow"></span>
                 <span className="dot green"></span>
               </div>
-              <div className="lp-mockup-title">codeshor-ai-widget.js • Live Context Preview</div>
+              <div className="lp-mockup-title">codeshor-ai-widget.js</div>
               <div className="lp-mockup-badge">ONLINE</div>
             </div>
 
@@ -146,20 +149,20 @@ const LandingPage = () => {
               <div className="lp-chat-msg bot">
                 <div className="lp-avatar">🤖</div>
                 <div className="lp-msg-bubble">
-                  For permanent IT hiring, our charges range from <strong>8% to 12% of the candidate's annual CTC</strong>. Would you like me to connect you with our talent acquisition lead?
+                  For permanent IT hiring, our charges range from <strong>8% to 12% of annual CTC</strong>. Would you like me to connect you with our talent acquisition lead?
                 </div>
               </div>
 
               <div className="lp-chat-msg user voice">
                 <div className="lp-msg-bubble">
-                  <span className="lp-voice-wave">🎙️ Audio Note (0:14) • "Can I book a quick demo call?"</span>
+                  <span className="lp-voice-wave">🎙️ Audio Note (0:14) • "Can I book a demo?"</span>
                 </div>
               </div>
 
               <div className="lp-chat-msg bot">
                 <div className="lp-avatar">🤖</div>
                 <div className="lp-msg-bubble">
-                  Absolutely! Please leave your email or WhatsApp number below, and our team will schedule a live call right away.
+                  Absolutely! Leave your email or phone below and our team will schedule a live demo right away.
                 </div>
               </div>
             </div>
@@ -167,7 +170,7 @@ const LandingPage = () => {
         </div>
 
         {/* Trust Metrics */}
-        <div className="lp-stats-grid animate-fade-up" style={{ animationDelay: '0.5s' }}>
+        <div className="lp-stats-grid">
           <div className="lp-stat-card">
             <div className="lp-stat-value">99.9%</div>
             <div className="lp-stat-label">Uptime SLA</div>
@@ -178,11 +181,11 @@ const LandingPage = () => {
           </div>
           <div className="lp-stat-card">
             <div className="lp-stat-value">&lt; 50ms</div>
-            <div className="lp-stat-label">Fast-Rule Intent Match</div>
+            <div className="lp-stat-label">Fast-Rule Match</div>
           </div>
           <div className="lp-stat-card">
             <div className="lp-stat-value">93%</div>
-            <div className="lp-stat-label">Support Automation</div>
+            <div className="lp-stat-label">Automation Rate</div>
           </div>
         </div>
       </header>
@@ -316,7 +319,7 @@ const LandingPage = () => {
 
             <ul className="lp-pricing-features">
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>1,000 AI Text Responses</strong> / mo</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>100 Voice Interactions</strong> (1 min cap)</li>
+              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>100 Voice Interactions</strong></li>
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> Basic Widget Customization</li>
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> Standard Knowledge Base</li>
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> Email Support</li>
@@ -329,11 +332,11 @@ const LandingPage = () => {
 
           {/* Growth Plan */}
           <div className="lp-pricing-card popular">
-            <div className="lp-popular-badge">🔥 MOST POPULAR • 93% PROFIT ROI</div>
+            <div className="lp-popular-badge">🔥 MOST POPULAR • 93% ROI</div>
 
             <div className="lp-pricing-header">
               <h3 className="lp-pricing-name">Growth Plan</h3>
-              <p className="lp-pricing-target">Perfect for E-commerce, Real Estate &amp; Clinics</p>
+              <p className="lp-pricing-target">Perfect for E-commerce &amp; Clinics</p>
               <div className="lp-pricing-amount">
                 <span className="lp-currency">₹</span>3,499<span className="lp-period">/month</span>
               </div>
@@ -343,7 +346,7 @@ const LandingPage = () => {
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>3,000 AI Text Responses</strong> / mo</li>
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>400 Voice Interactions</strong></li>
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> Advanced Analytics &amp; Lead Sync</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>Remove Codeshor Watermark</strong></li>
+              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>Remove Watermark</strong></li>
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> Knowledge Gap Auto-Tracker</li>
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> Priority Chat &amp; Email Support</li>
             </ul>
@@ -357,7 +360,7 @@ const LandingPage = () => {
           <div className="lp-pricing-card">
             <div className="lp-pricing-header">
               <h3 className="lp-pricing-name">Enterprise Plan</h3>
-              <p className="lp-pricing-target">For high-traffic agencies &amp; enterprise platforms</p>
+              <p className="lp-pricing-target">For high-traffic agencies &amp; platforms</p>
               <div className="lp-pricing-amount">
                 <span className="lp-currency">₹</span>7,999<span className="lp-period">/month</span>
               </div>
@@ -366,13 +369,13 @@ const LandingPage = () => {
             <ul className="lp-pricing-features">
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>10,000 AI Text Responses</strong> / mo</li>
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>1,500 Voice Interactions</strong></li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> Custom API &amp; CRM Integrations</li>
+              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> Custom API Integrations</li>
               <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> Dedicated Account Manager</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> 99.9% SLA &amp; Priority 24/7 Support</li>
+              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg> 99.9% SLA &amp; Priority Support</li>
             </ul>
 
             <Link to="/login" className="lp-btn lp-btn-secondary lp-btn-full">
-              Contact Enterprise Sales
+              Contact Sales
             </Link>
           </div>
         </div>
@@ -430,7 +433,7 @@ const LandingPage = () => {
             </div>
             <p className="lp-footer-tagline">Crafting Next-Gen Autonomous AI Experiences.</p>
             <div className="lp-footer-house">
-              from the House of <span className="lp-house-highlight">C O D E S H O R</span>
+              From the House of <span className="lp-house-highlight">C O D E S H O R</span>
             </div>
           </div>
 
