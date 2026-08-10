@@ -6,7 +6,7 @@ const LandingPage = () => {
   return (
     <>
       {/* Navbar */}
-      <nav className="lp-container lp-nav">
+      <nav className="lp-container lp-nav animate-fade-up" style={{ animationDelay: '0s' }}>
         <div className="lp-nav-logo">
           Codeshor <span className="lp-text-gradient">AI</span>
         </div>
@@ -27,17 +27,17 @@ const LandingPage = () => {
         <div className="lp-glow-1"></div>
         <div className="lp-glow-2"></div>
         
-        <h1 className="lp-hero-title">
+        <h1 className="lp-hero-title animate-fade-up" style={{ animationDelay: '0.1s' }}>
           The Intelligent Chatbot for <br />
           <span className="lp-text-gradient">Modern Businesses</span>
         </h1>
         
-        <p className="lp-hero-subtitle">
+        <p className="lp-hero-subtitle animate-fade-up" style={{ animationDelay: '0.2s' }}>
           Embed a powerful, AI-driven assistant into your website in minutes. 
           Provide real-time support, capture leads effortlessly, and scale your customer engagement with Codeshor AI.
         </p>
 
-        <div className="lp-hero-cta-group">
+        <div className="lp-hero-cta-group animate-fade-up" style={{ animationDelay: '0.3s' }}>
           <Link to="/login" className="lp-btn lp-btn-primary">
             Start Your Free Trial
           </Link>
@@ -46,18 +46,18 @@ const LandingPage = () => {
           </a>
         </div>
 
-        <div className="lp-hero-image-wrapper">
+        <div className="lp-hero-image-wrapper animate-fade-up" style={{ animationDelay: '0.4s' }}>
           <img 
             src="/assets/hero-mockup.png" 
             alt="Codeshor AI Chatbot Interface" 
-            className="lp-hero-image" 
+            className="lp-hero-image animate-float" 
           />
         </div>
       </section>
 
       {/* Features Section */}
       <section id="features" className="lp-section lp-container">
-        <div className="lp-section-header">
+        <div className="lp-section-header animate-fade-up">
           <h2 className="lp-section-title">Everything You Need to Scale</h2>
           <p className="lp-section-desc">
             Powerful features designed to automate support and drive conversions without writing a single line of complex code.
@@ -65,7 +65,7 @@ const LandingPage = () => {
         </div>
 
         <div className="lp-features-grid">
-          <div className="lp-feature-card">
+          <div className="lp-feature-card animate-fade-up" style={{ animationDelay: '0.1s' }}>
             <div className="lp-feature-icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
             </div>
@@ -73,7 +73,7 @@ const LandingPage = () => {
             <p className="lp-feature-desc">Our RAG-powered engine understands your business context deeply, providing accurate and conversational responses.</p>
           </div>
           
-          <div className="lp-feature-card">
+          <div className="lp-feature-card animate-fade-up" style={{ animationDelay: '0.2s' }}>
             <div className="lp-feature-icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
             </div>
@@ -81,7 +81,7 @@ const LandingPage = () => {
             <p className="lp-feature-desc">Deploy the widget to any website simply by dropping in a single script tag. Works universally on any platform.</p>
           </div>
 
-          <div className="lp-feature-card">
+          <div className="lp-feature-card animate-fade-up" style={{ animationDelay: '0.3s' }}>
             <div className="lp-feature-icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
