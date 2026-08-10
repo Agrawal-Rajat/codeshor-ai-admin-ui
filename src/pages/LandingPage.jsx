@@ -9,6 +9,7 @@ const LandingPage = () => {
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [monthlyQueries, setMonthlyQueries] = useState(2500);
   const [copiedCode, setCopiedCode] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(1);
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -77,6 +78,7 @@ const LandingPage = () => {
         </div>
 
         <div className={`lp-nav-links ${mobileMenuOpen ? 'active' : ''}`}>
+          <a href="#how-easy" onClick={() => setMobileMenuOpen(false)}>How Easy It Is</a>
           <a href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a>
           <a href="#demo" onClick={() => setMobileMenuOpen(false)}>Live Demo</a>
           <a href="#calculator" onClick={() => setMobileMenuOpen(false)}>ROI Calculator</a>
@@ -130,8 +132,8 @@ const LandingPage = () => {
             Start 14-Day Free Trial
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </Link>
-          <a href="#calculator" className="lp-btn lp-btn-secondary lp-btn-lg">
-            Calculate Your ROI
+          <a href="#how-easy" className="lp-btn lp-btn-secondary lp-btn-lg">
+            See 2-Minute Onboarding
           </a>
         </div>
 
@@ -285,25 +287,152 @@ const LandingPage = () => {
         </div>
       </header>
 
-      {/* Code Embed Snippet Component */}
-      <section className="lp-section lp-container">
-        <div className="lp-code-snippet-box">
-          <div className="lp-snippet-header">
-            <div className="lp-snippet-info">
-              <span className="lp-snippet-icon">⚡</span>
-              <div>
-                <h3 className="lp-snippet-title">Embed in 60 Seconds</h3>
-                <p className="lp-snippet-desc">Copy and paste this single script tag before the closing &lt;/head&gt; tag on any website.</p>
+      {/* IMPRESSIVE COMPONENT: "How Easy It Is" 3-Step Onboarding Walkthrough */}
+      <section id="how-easy" className="lp-section lp-container">
+        <div className="lp-section-header">
+          <div className="lp-section-tag">ZERO TECH FRICTION</div>
+          <h2 className="lp-section-title">How Easy It Is For Your Business To Go Live</h2>
+          <p className="lp-section-desc">From signup to your first AI automated conversation in 3 simple steps.</p>
+        </div>
+
+        <div className="lp-onboarding-container">
+          {/* Step Selector Controls */}
+          <div className="lp-stepper-controls">
+            <button 
+              className={`lp-stepper-btn ${onboardingStep === 1 ? 'active' : ''}`}
+              onClick={() => setOnboardingStep(1)}
+            >
+              <div className="lp-step-num">01</div>
+              <div className="lp-step-meta">
+                <span className="lp-step-name">Register Domain</span>
+                <span className="lp-step-time">30 Seconds</span>
               </div>
-            </div>
-            <button className="lp-btn lp-btn-secondary" onClick={handleCopyCode}>
-              {copiedCode ? '✓ Copied!' : '📋 Copy Script Tag'}
+            </button>
+
+            <button 
+              className={`lp-stepper-btn ${onboardingStep === 2 ? 'active' : ''}`}
+              onClick={() => setOnboardingStep(2)}
+            >
+              <div className="lp-step-num">02</div>
+              <div className="lp-step-meta">
+                <span className="lp-step-name">Feed Business Knowledge</span>
+                <span className="lp-step-time">60 Seconds</span>
+              </div>
+            </button>
+
+            <button 
+              className={`lp-stepper-btn ${onboardingStep === 3 ? 'active' : ''}`}
+              onClick={() => setOnboardingStep(3)}
+            >
+              <div className="lp-step-num">03</div>
+              <div className="lp-step-meta">
+                <span className="lp-step-name">Paste Script &amp; Go Live</span>
+                <span className="lp-step-time">30 Seconds</span>
+              </div>
             </button>
           </div>
-          <div className="lp-code-block">
-            <code>
-              &lt;<span className="tag">script</span> <span className="attr">src</span>=<span className="val">"https://cdn.codeshor.ai/widget.js"</span> <span className="attr">data-client-id</span>=<span className="val">"YOUR_CLIENT_ID"</span> <span className="attr">async</span>&gt;&lt;/<span className="tag">script</span>&gt;
-            </code>
+
+          {/* Interactive Visual Display Window */}
+          <div className="lp-onboarding-display-card">
+            {onboardingStep === 1 && (
+              <div className="lp-step-content-box animate-fade-in">
+                <div className="lp-step-header-info">
+                  <span className="lp-step-badge">STEP 1 OF 3</span>
+                  <h3 className="lp-step-heading">Create Account &amp; Register Website Domain</h3>
+                  <p className="lp-step-subheading">Enter your company name and domain URL. Our system automatically issues SSL certificates and sets up secure domain whitelisting.</p>
+                </div>
+
+                <div className="lp-step-mockup-form">
+                  <div className="lp-form-row">
+                    <label>Company Name</label>
+                    <input type="text" readOnly value="Acme Technologies Inc." className="lp-preview-input" />
+                  </div>
+                  <div className="lp-form-row">
+                    <label>Website Domain</label>
+                    <div className="lp-input-with-badge">
+                      <input type="text" readOnly value="acmetech.com" className="lp-preview-input" />
+                      <span className="lp-verified-badge">✓ Whitelisted</span>
+                    </div>
+                  </div>
+                  <div className="lp-form-action">
+                    <button className="lp-btn lp-btn-primary" onClick={() => setOnboardingStep(2)}>
+                      Next: Feed Knowledge Base $\rightarrow$
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {onboardingStep === 2 && (
+              <div className="lp-step-content-box animate-fade-in">
+                <div className="lp-step-header-info">
+                  <span className="lp-step-badge">STEP 2 OF 3</span>
+                  <h3 className="lp-step-heading">Feed Business Services, Pricing &amp; FAQs</h3>
+                  <p className="lp-step-subheading">No complex data modeling needed. Simply type or paste your services, pricing rates, working hours, and FAQs. Our RAG engine indexes it instantly into Pinecone vectors.</p>
+                </div>
+
+                <div className="lp-knowledge-feed-mockup">
+                  <div className="lp-kb-item">
+                    <span className="lp-kb-icon">📋</span>
+                    <div>
+                      <div className="lp-kb-title">Services &amp; Offerings</div>
+                      <div className="lp-kb-desc">IT Staffing, Software Development, UI/UX Design</div>
+                    </div>
+                    <span className="lp-kb-status">Indexed</span>
+                  </div>
+
+                  <div className="lp-kb-item">
+                    <span className="lp-kb-icon">💰</span>
+                    <div>
+                      <div className="lp-kb-title">Pricing Structure</div>
+                      <div className="lp-kb-desc">8-12% annual CTC for permanent staffing; custom contract rates</div>
+                    </div>
+                    <span className="lp-kb-status">Indexed</span>
+                  </div>
+
+                  <div className="lp-kb-item">
+                    <span className="lp-kb-icon">⏰</span>
+                    <div>
+                      <div className="lp-kb-title">Business Hours &amp; Location</div>
+                      <div className="lp-kb-desc">Mon-Fri 9:30 AM - 6:30 PM IST • Bengaluru, India</div>
+                    </div>
+                    <span className="lp-kb-status">Indexed</span>
+                  </div>
+
+                  <div className="lp-form-action">
+                    <button className="lp-btn lp-btn-primary" onClick={() => setOnboardingStep(3)}>
+                      Next: Get 1-Line Script $\rightarrow$
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {onboardingStep === 3 && (
+              <div className="lp-step-content-box animate-fade-in">
+                <div className="lp-step-header-info">
+                  <span className="lp-step-badge">STEP 3 OF 3</span>
+                  <h3 className="lp-step-heading">Copy 1-Line Script Tag &amp; Activate</h3>
+                  <p className="lp-step-subheading">Paste this lightweight JavaScript tag right before your site's &lt;/head&gt; tag. Your AI chatbot is immediately live, capturing leads and handling support 24/7!</p>
+                </div>
+
+                <div className="lp-script-embed-mockup">
+                  <div className="lp-script-bar">
+                    <code>
+                      &lt;<span className="tag">script</span> <span className="attr">src</span>=<span className="val">"https://cdn.codeshor.ai/widget.js"</span> <span className="attr">data-client-id</span>=<span className="val">"acme-699d6"</span> <span className="attr">async</span>&gt;&lt;/<span className="tag">script</span>&gt;
+                    </code>
+                    <button className="lp-btn lp-btn-secondary" onClick={handleCopyCode}>
+                      {copiedCode ? '✓ Copied!' : '📋 Copy Tag'}
+                    </button>
+                  </div>
+
+                  <div className="lp-live-status-banner">
+                    <div className="lp-status-pulse"></div>
+                    <span>🎉 <strong>Widget Activated!</strong> Live on acmetech.com • Capturing leads 24/7</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -629,6 +758,7 @@ const LandingPage = () => {
           </div>
 
           <div className="lp-footer-links">
+            <a href="#how-easy">How Easy It Is</a>
             <a href="#features">Features</a>
             <a href="#demo">Live Demo</a>
             <a href="#calculator">Calculator</a>
