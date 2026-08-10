@@ -8,18 +8,10 @@ const LandingPage = () => {
   const [heroTab, setHeroTab] = useState('chat');
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [monthlyQueries, setMonthlyQueries] = useState(2500);
-  const [copiedCode, setCopiedCode] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(1);
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
-  };
-
-  const handleCopyCode = () => {
-    const codeSnippet = `<script src="https://cdn.codeshor.ai/widget.js" data-client-id="YOUR_CLIENT_ID" async></script>`;
-    navigator.clipboard.writeText(codeSnippet);
-    setCopiedCode(true);
-    setTimeout(() => setCopiedCode(false), 2000);
   };
 
   // ROI Calculator Math
@@ -41,11 +33,11 @@ const LandingPage = () => {
     },
     {
       q: "Can I embed Codeshor AI on any website platform?",
-      a: "Yes! Works universally on WordPress, Shopify, Webflow, Wix, React, Next.js, or plain HTML. Simply copy and paste a single `<script>` tag into your site."
+      a: "Yes! Works universally on WordPress, Shopify, Webflow, Wix, React, Next.js, or plain HTML with zero technical setup required."
     },
     {
       q: "How fast can I get started?",
-      a: "You can set up your business profile, customize your widget colors, and embed the AI chatbot on your website in under 2 minutes."
+      a: "You can set up your business profile, customize your widget colors, and activate your AI chatbot on your website in under 2 minutes."
     }
   ];
 
@@ -326,8 +318,8 @@ const LandingPage = () => {
             >
               <div className="lp-step-num">03</div>
               <div className="lp-step-meta">
-                <span className="lp-step-name">Paste Script &amp; Go Live</span>
-                <span className="lp-step-time">30 Seconds</span>
+                <span className="lp-step-name">One-Click Activation</span>
+                <span className="lp-step-time">Instant Go-Live</span>
               </div>
             </button>
           </div>
@@ -401,7 +393,7 @@ const LandingPage = () => {
 
                   <div className="lp-form-action">
                     <button className="lp-btn lp-btn-primary" onClick={() => setOnboardingStep(3)}>
-                      Next: Get 1-Line Script $\rightarrow$
+                      Next: Activate AI Assistant $\rightarrow$
                     </button>
                   </div>
                 </div>
@@ -412,23 +404,40 @@ const LandingPage = () => {
               <div className="lp-step-content-box animate-fade-in">
                 <div className="lp-step-header-info">
                   <span className="lp-step-badge">STEP 3 OF 3</span>
-                  <h3 className="lp-step-heading">Copy 1-Line Script Tag &amp; Activate</h3>
-                  <p className="lp-step-subheading">Paste this lightweight JavaScript tag right before your site's &lt;/head&gt; tag. Your AI chatbot is immediately live, capturing leads and handling support 24/7!</p>
+                  <h3 className="lp-step-heading">One-Click Activation &amp; Instant Go-Live</h3>
+                  <p className="lp-step-subheading">Select your website platform (Shopify, WordPress, Webflow, React, or Custom Web). Click Activate and your AI chatbot immediately begins capturing leads and handling support 24/7!</p>
                 </div>
 
-                <div className="lp-script-embed-mockup">
-                  <div className="lp-script-bar">
-                    <code>
-                      &lt;<span className="tag">script</span> <span className="attr">src</span>=<span className="val">"https://cdn.codeshor.ai/widget.js"</span> <span className="attr">data-client-id</span>=<span className="val">"acme-699d6"</span> <span className="attr">async</span>&gt;&lt;/<span className="tag">script</span>&gt;
-                    </code>
-                    <button className="lp-btn lp-btn-secondary" onClick={handleCopyCode}>
-                      {copiedCode ? '✓ Copied!' : '📋 Copy Tag'}
-                    </button>
+                <div className="lp-activation-mockup">
+                  <div className="lp-platform-cards-grid">
+                    <div className="lp-platform-card active">
+                      <span className="lp-platform-icon">🌐</span>
+                      <div className="lp-platform-name">WordPress / Webflow</div>
+                      <span className="lp-platform-status">1-Click Connected</span>
+                    </div>
+
+                    <div className="lp-platform-card active">
+                      <span className="lp-platform-icon">🛍️</span>
+                      <div className="lp-platform-name">Shopify Store</div>
+                      <span className="lp-platform-status">App Connected</span>
+                    </div>
+
+                    <div className="lp-platform-card active">
+                      <span className="lp-platform-icon">⚡</span>
+                      <div className="lp-platform-name">Custom React / Web</div>
+                      <span className="lp-platform-status">Auto-Detected</span>
+                    </div>
                   </div>
 
                   <div className="lp-live-status-banner">
                     <div className="lp-status-pulse"></div>
-                    <span>🎉 <strong>Widget Activated!</strong> Live on acmetech.com • Capturing leads 24/7</span>
+                    <span>🎉 <strong>AI Assistant Active &amp; Responding 24/7!</strong> Live on acmetech.com • Lead Capture On</span>
+                  </div>
+
+                  <div className="lp-form-action">
+                    <Link to="/login" className="lp-btn lp-btn-primary lp-btn-lg">
+                      Launch Your AI Assistant Now $\rightarrow$
+                    </Link>
                   </div>
                 </div>
               </div>
