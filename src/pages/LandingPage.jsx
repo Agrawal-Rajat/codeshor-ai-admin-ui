@@ -5,15 +5,30 @@ import '../styles/landing.css';
 const LandingPage = () => {
   const [openFaq, setOpenFaq] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [heroTab, setHeroTab] = useState('chat');
+  const [billingCycle, setBillingCycle] = useState('monthly');
+  const [monthlyQueries, setMonthlyQueries] = useState(2500);
+  const [copiedCode, setCopiedCode] = useState(false);
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
+  const handleCopyCode = () => {
+    const codeSnippet = `<script src="https://cdn.codeshor.ai/widget.js" data-client-id="YOUR_CLIENT_ID" async></script>`;
+    navigator.clipboard.writeText(codeSnippet);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
+
+  // ROI Calculator Math
+  const hoursSavedPerMonth = Math.round((monthlyQueries * 3) / 60);
+  const estimatedMoneySaved = Math.round(hoursSavedPerMonth * 350);
+
   const faqs = [
     {
       q: "How does Codeshor AI prevent hallucinations?",
-      a: "Codeshor AI uses RAG (Retrieval-Augmented Generation) powered by GPT-4o-mini and Pinecone Vector Search. It strictly answers using ONLY your verified business data. If the answer isn't in your knowledge base, it politely directs the client to contact you."
+      a: "Codeshor AI uses RAG (Retrieval-Augmented Generation) powered by GPT-4o-mini and Pinecone Vector Search. It strictly answers using ONLY your verified business context. If the answer isn't in your knowledge base, it politely directs the client to contact you."
     },
     {
       q: "How do Voice Interactions work in the chatbot?",
@@ -35,7 +50,10 @@ const LandingPage = () => {
 
   return (
     <div className="lp-root">
-      {/* Ambient Glow Backgrounds */}
+      {/* Grid Pattern Backdrop */}
+      <div className="lp-grid-pattern"></div>
+
+      {/* Ambient Glows */}
       <div className="lp-ambient-glow lp-ambient-1"></div>
       <div className="lp-ambient-glow lp-ambient-2"></div>
 
@@ -60,12 +78,10 @@ const LandingPage = () => {
 
         <div className={`lp-nav-links ${mobileMenuOpen ? 'active' : ''}`}>
           <a href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a>
-          <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
+          <a href="#demo" onClick={() => setMobileMenuOpen(false)}>Live Demo</a>
+          <a href="#calculator" onClick={() => setMobileMenuOpen(false)}>ROI Calculator</a>
           <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
           <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-          {/* <Link to="/login" className="lp-nav-mobile-btn lp-btn lp-btn-secondary" onClick={() => setMobileMenuOpen(false)}>
-            Sign In
-          </Link> */}
         </div>
 
         <div className="lp-nav-actions">
@@ -76,8 +92,8 @@ const LandingPage = () => {
             Start Free Trial
           </Link>
 
-          <button
-            className="lp-mobile-menu-toggle"
+          <button 
+            className="lp-mobile-menu-toggle" 
             aria-label="Toggle Navigation"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
@@ -95,8 +111,8 @@ const LandingPage = () => {
       {/* Hero Section */}
       <header className="lp-hero lp-container">
         <div className="lp-hero-pill">
-          <span className="lp-pill-sparkle">✨</span>
-          <span>Next-Gen Autonomous AI Assistant for B2B SaaS</span>
+          <span className="lp-pill-sparkle">🚀</span>
+          <span>Next-Gen Autonomous AI &amp; Voice Platform for B2B</span>
         </div>
 
         <h1 className="lp-hero-title">
@@ -105,22 +121,49 @@ const LandingPage = () => {
         </h1>
 
         <p className="lp-hero-subtitle">
-          Deploy an intelligent, voice-enabled AI assistant in under 2 minutes.
+          Deploy an intelligent, voice-enabled AI assistant in under 2 minutes. 
           Zero hallucinations, instant lead capture, and automated customer support that gets smarter every day.
         </p>
 
         <div className="lp-hero-cta-group">
           <Link to="/login" className="lp-btn lp-btn-primary lp-btn-lg">
             Start 14-Day Free Trial
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </Link>
-          <a href="#how-it-works" className="lp-btn lp-btn-secondary lp-btn-lg">
-            See How It Works
+          <a href="#calculator" className="lp-btn lp-btn-secondary lp-btn-lg">
+            Calculate Your ROI
           </a>
         </div>
 
-        {/* Live Mockup Demo Card */}
-        <div className="lp-hero-mockup-wrapper">
+        {/* Interactive Feature Switcher / Live Preview */}
+        <div id="demo" className="lp-interactive-demo-container">
+          <div className="lp-demo-tabs">
+            <button 
+              className={`lp-demo-tab ${heroTab === 'chat' ? 'active' : ''}`}
+              onClick={() => setHeroTab('chat')}
+            >
+              💬 Smart RAG Chat
+            </button>
+            <button 
+              className={`lp-demo-tab ${heroTab === 'voice' ? 'active' : ''}`}
+              onClick={() => setHeroTab('voice')}
+            >
+              🎙️ Voice Notes AI
+            </button>
+            <button 
+              className={`lp-demo-tab ${heroTab === 'leads' ? 'active' : ''}`}
+              onClick={() => setHeroTab('leads')}
+            >
+              🧲 Lead Capture
+            </button>
+            <button 
+              className={`lp-demo-tab ${heroTab === 'knowledge' ? 'active' : ''}`}
+              onClick={() => setHeroTab('knowledge')}
+            >
+              🧠 Knowledge Gaps
+            </button>
+          </div>
+
           <div className="lp-mockup-card">
             <div className="lp-mockup-header">
               <div className="lp-mockup-dots">
@@ -128,48 +171,100 @@ const LandingPage = () => {
                 <span className="dot yellow"></span>
                 <span className="dot green"></span>
               </div>
-              <div className="lp-mockup-title">codeshor-ai-widget.js</div>
-              <div className="lp-mockup-badge">ONLINE</div>
+              <div className="lp-mockup-title">
+                {heroTab === 'chat' && 'codeshor-ai • RAG Context Engine'}
+                {heroTab === 'voice' && 'codeshor-ai • Real-time Voice Transcription'}
+                {heroTab === 'leads' && 'codeshor-ai • Automated Lead Qualification'}
+                {heroTab === 'knowledge' && 'codeshor-ai • One-Click Knowledge Gap Trainer'}
+              </div>
+              <div className="lp-mockup-badge">LIVE DEMO</div>
             </div>
 
             <div className="lp-mockup-body">
-              <div className="lp-chat-msg bot">
-                <div className="lp-avatar">🤖</div>
-                <div className="lp-msg-bubble">
-                  Hi! Welcome to Codeshor AI. How can I help you scale your business today?
-                </div>
-              </div>
+              {heroTab === 'chat' && (
+                <>
+                  <div className="lp-chat-msg bot">
+                    <div className="lp-avatar">🤖</div>
+                    <div className="lp-msg-bubble">
+                      Welcome to Codeshor AI! Ask me anything about our services or pricing.
+                    </div>
+                  </div>
+                  <div className="lp-chat-msg user">
+                    <div className="lp-msg-bubble">
+                      What are your permanent hiring pricing rates?
+                    </div>
+                  </div>
+                  <div className="lp-chat-msg bot">
+                    <div className="lp-avatar">🤖</div>
+                    <div className="lp-msg-bubble">
+                      For permanent hiring, our fee is <strong>8% to 12% of the candidate's annual CTC</strong>. We close 90% of roles within 2 to 4 weeks!
+                    </div>
+                  </div>
+                </>
+              )}
 
-              <div className="lp-chat-msg user">
-                <div className="lp-msg-bubble">
-                  What are your pricing plans for permanent IT hiring?
-                </div>
-              </div>
+              {heroTab === 'voice' && (
+                <>
+                  <div className="lp-chat-msg user voice">
+                    <div className="lp-msg-bubble">
+                      <span className="lp-voice-wave">🎙️ Voice Note (0:12) • "Hi, do you offer bulk hiring for startups?"</span>
+                    </div>
+                  </div>
+                  <div className="lp-chat-msg bot">
+                    <div className="lp-avatar">🤖</div>
+                    <div className="lp-msg-bubble">
+                      Yes! We offer bulk hiring packages with custom volume discounts tailored for fast-growing startups. Would you like a price quote?
+                    </div>
+                  </div>
+                </>
+              )}
 
-              <div className="lp-chat-msg bot">
-                <div className="lp-avatar">🤖</div>
-                <div className="lp-msg-bubble">
-                  For permanent IT hiring, our charges range from <strong>8% to 12% of annual CTC</strong>. Would you like me to connect you with our talent acquisition lead?
+              {heroTab === 'leads' && (
+                <div className="lp-lead-preview-form">
+                  <div className="lp-lead-title">👋 Welcome! Enter your details to start chatting</div>
+                  <div className="lp-lead-inputs">
+                    <input type="text" placeholder="Your Name" readOnly value="Alex Johnson" className="lp-preview-input" />
+                    <input type="email" placeholder="Email Address" readOnly value="alex@company.com" className="lp-preview-input" />
+                    <button className="lp-btn lp-btn-primary lp-btn-full">Start Instant Chat</button>
+                  </div>
+                  <div className="lp-lead-footer">🔒 Lead automatically synced to Admin CRM</div>
                 </div>
-              </div>
+              )}
 
-              <div className="lp-chat-msg user voice">
-                <div className="lp-msg-bubble">
-                  <span className="lp-voice-wave">🎙️ Audio Note (0:14) • "Can I book a demo?"</span>
+              {heroTab === 'knowledge' && (
+                <div className="lp-knowledge-preview">
+                  <div className="lp-gap-header">
+                    <span className="lp-gap-badge">NEW KNOWLEDGE GAP DETECTED</span>
+                    <span className="lp-gap-time">Just now</span>
+                  </div>
+                  <div className="lp-gap-question">User asked: "Do you provide onsite developers in Bengaluru?"</div>
+                  <div className="lp-gap-answer-box">
+                    <label>Add Verified Answer:</label>
+                    <input type="text" readOnly value="Yes, we provide onsite developers across Bengaluru, Mumbai, and Delhi NCR." className="lp-preview-input" />
+                  </div>
+                  <button className="lp-btn lp-btn-primary" style={{ alignSelf: 'flex-end' }}>
+                    ✨ Train AI (1-Click)
+                  </button>
                 </div>
-              </div>
-
-              <div className="lp-chat-msg bot">
-                <div className="lp-avatar">🤖</div>
-                <div className="lp-msg-bubble">
-                  Absolutely! Leave your email or phone below and our team will schedule a live demo right away.
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Trust Metrics */}
+        {/* Tech Stack Logo Cloud */}
+        <div className="lp-logo-cloud">
+          <div className="lp-logo-cloud-title">POWERED BY ENTERPRISE INFRASTRUCTURE</div>
+          <div className="lp-logos-wrapper">
+            <span className="lp-tech-badge">OpenAI GPT-4o</span>
+            <span className="lp-tech-badge">Pinecone Vector DB</span>
+            <span className="lp-tech-badge">Vercel Edge</span>
+            <span className="lp-tech-badge">Upstash Redis</span>
+            <span className="lp-tech-badge">MongoDB Atlas</span>
+            <span className="lp-tech-badge">Render Cloud</span>
+          </div>
+        </div>
+
+        {/* Stats Bar */}
         <div className="lp-stats-grid">
           <div className="lp-stat-card">
             <div className="lp-stat-value">99.9%</div>
@@ -190,6 +285,29 @@ const LandingPage = () => {
         </div>
       </header>
 
+      {/* Code Embed Snippet Component */}
+      <section className="lp-section lp-container">
+        <div className="lp-code-snippet-box">
+          <div className="lp-snippet-header">
+            <div className="lp-snippet-info">
+              <span className="lp-snippet-icon">⚡</span>
+              <div>
+                <h3 className="lp-snippet-title">Embed in 60 Seconds</h3>
+                <p className="lp-snippet-desc">Copy and paste this single script tag before the closing &lt;/head&gt; tag on any website.</p>
+              </div>
+            </div>
+            <button className="lp-btn lp-btn-secondary" onClick={handleCopyCode}>
+              {copiedCode ? '✓ Copied!' : '📋 Copy Script Tag'}
+            </button>
+          </div>
+          <div className="lp-code-block">
+            <code>
+              &lt;<span className="tag">script</span> <span className="attr">src</span>=<span className="val">"https://cdn.codeshor.ai/widget.js"</span> <span className="attr">data-client-id</span>=<span className="val">"YOUR_CLIENT_ID"</span> <span className="attr">async</span>&gt;&lt;/<span className="tag">script</span>&gt;
+            </code>
+          </div>
+        </div>
+      </section>
+
       {/* Features Grid Section */}
       <section id="features" className="lp-section lp-container">
         <div className="lp-section-header">
@@ -201,7 +319,6 @@ const LandingPage = () => {
         </div>
 
         <div className="lp-features-grid">
-          {/* Feature 1 */}
           <div className="lp-feature-card">
             <div className="lp-feature-icon-wrapper">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" /><path d="M12 6v6l4 2" /></svg>
@@ -212,7 +329,6 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* Feature 2 */}
           <div className="lp-feature-card">
             <div className="lp-feature-icon-wrapper highlight">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
@@ -223,7 +339,6 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* Feature 3 */}
           <div className="lp-feature-card">
             <div className="lp-feature-icon-wrapper">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="22" /></svg>
@@ -234,7 +349,6 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* Feature 4 */}
           <div className="lp-feature-card">
             <div className="lp-feature-icon-wrapper">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
@@ -245,7 +359,6 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* Feature 5 */}
           <div className="lp-feature-card">
             <div className="lp-feature-icon-wrapper">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
@@ -256,7 +369,6 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* Feature 6 */}
           <div className="lp-feature-card">
             <div className="lp-feature-icon-wrapper">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
@@ -269,32 +381,89 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="lp-section lp-container">
+      {/* Interactive ROI Calculator Component */}
+      <section id="calculator" className="lp-section lp-container">
         <div className="lp-section-header">
-          <div className="lp-section-tag">SIMPLE SETUP</div>
-          <h2 className="lp-section-title">Get Up &amp; Running in 3 Easy Steps</h2>
-          <p className="lp-section-desc">No coding experience required. Transform your site engagement today.</p>
+          <div className="lp-section-tag">ESTIMATE SAVINGS</div>
+          <h2 className="lp-section-title">See How Much Time &amp; Money You Save</h2>
+          <p className="lp-section-desc">Adjust your monthly query volume to estimate your team's savings.</p>
         </div>
 
-        <div className="lp-steps-grid">
-          <div className="lp-step-card">
-            <div className="lp-step-number">01</div>
-            <h3 className="lp-step-title">Embed Script Tag</h3>
-            <p className="lp-step-desc">Copy and paste a single line of lightweight JavaScript into your website header or footer.</p>
+        <div className="lp-calculator-box">
+          <div className="lp-calc-inputs">
+            <div className="lp-slider-header">
+              <label>Monthly Visitor Queries / Chats:</label>
+              <span className="lp-slider-value">{monthlyQueries.toLocaleString()} / mo</span>
+            </div>
+            <input 
+              type="range" 
+              min="500" 
+              max="15000" 
+              step="500"
+              value={monthlyQueries}
+              onChange={(e) => setMonthlyQueries(Number(e.target.value))}
+              className="lp-range-slider"
+            />
           </div>
 
-          <div className="lp-step-card">
-            <div className="lp-step-number">02</div>
-            <h3 className="lp-step-title">Add Business Knowledge</h3>
-            <p className="lp-step-desc">Input your services, pricing tiers, FAQs, and contact details into the Admin Dashboard.</p>
+          <div className="lp-calc-results">
+            <div className="lp-calc-card">
+              <div className="lp-calc-number">{hoursSavedPerMonth} hrs</div>
+              <div className="lp-calc-label">Support Hours Saved / mo</div>
+            </div>
+            <div className="lp-calc-card highlight">
+              <div className="lp-calc-number">₹{estimatedMoneySaved.toLocaleString()}</div>
+              <div className="lp-calc-label">Estimated Monthly Savings</div>
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div className="lp-step-card">
-            <div className="lp-step-number">03</div>
-            <h3 className="lp-step-title">Autopilot Sales &amp; Support</h3>
-            <p className="lp-step-desc">Your AI chatbot immediately begins serving visitors, capturing leads, and learning automatically.</p>
-          </div>
+      {/* Comparison Matrix Component */}
+      <section className="lp-section lp-container">
+        <div className="lp-section-header">
+          <div className="lp-section-tag">WHY CHOOSE US</div>
+          <h2 className="lp-section-title">Codeshor AI vs Legacy Chatbots</h2>
+          <p className="lp-section-desc">See why modern B2B companies are switching to our autonomous AI engine.</p>
+        </div>
+
+        <div className="lp-comparison-table-wrapper">
+          <table className="lp-comparison-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Legacy Chatbots</th>
+                <th className="lp-highlight-col">Codeshor AI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Hallucination Protection</td>
+                <td>❌ Frequent wrong answers</td>
+                <td className="lp-highlight-col">✓ 100% Context Strict (RAG)</td>
+              </tr>
+              <tr>
+                <td>Voice Note Support</td>
+                <td>❌ Text Only</td>
+                <td className="lp-highlight-col">✓ Speech-to-Text &amp; Audio AI</td>
+              </tr>
+              <tr>
+                <td>Auto-Learning Loop</td>
+                <td>❌ Manual FAQ setup</td>
+                <td className="lp-highlight-col">✓ Knowledge Gap Auto-Tracker</td>
+              </tr>
+              <tr>
+                <td>Response Latency</td>
+                <td>⚠️ 3-5 seconds</td>
+                <td className="lp-highlight-col">⚡ &lt; 50ms Fast-Rules</td>
+              </tr>
+              <tr>
+                <td>Lead Generation</td>
+                <td>❌ Complex integrations required</td>
+                <td className="lp-highlight-col">✓ Native Pre-Chat Qualification</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -304,6 +473,22 @@ const LandingPage = () => {
           <div className="lp-section-tag">TRANSPARENT PRICING</div>
           <h2 className="lp-section-title">Plans Built for Every Stage of Growth</h2>
           <p className="lp-section-desc">Straightforward pricing in INR with zero hidden fees. Scale as your traffic expands.</p>
+          
+          {/* Billing Cycle Toggle */}
+          <div className="lp-billing-toggle">
+            <button 
+              className={`lp-billing-btn ${billingCycle === 'monthly' ? 'active' : ''}`}
+              onClick={() => setBillingCycle('monthly')}
+            >
+              Monthly Billing
+            </button>
+            <button 
+              className={`lp-billing-btn ${billingCycle === 'annual' ? 'active' : ''}`}
+              onClick={() => setBillingCycle('annual')}
+            >
+              Yearly Billing <span className="lp-discount-badge">Save 20%</span>
+            </button>
+          </div>
         </div>
 
         <div className="lp-pricing-grid">
@@ -313,7 +498,9 @@ const LandingPage = () => {
               <h3 className="lp-pricing-name">Starter Plan</h3>
               <p className="lp-pricing-target">Ideal for local businesses &amp; startups</p>
               <div className="lp-pricing-amount">
-                <span className="lp-currency">₹</span>1,499<span className="lp-period">/month</span>
+                <span className="lp-currency">₹</span>
+                {billingCycle === 'monthly' ? '1,499' : '1,199'}
+                <span className="lp-period">/month</span>
               </div>
             </div>
 
@@ -338,7 +525,9 @@ const LandingPage = () => {
               <h3 className="lp-pricing-name">Growth Plan</h3>
               <p className="lp-pricing-target">Perfect for E-commerce &amp; Clinics</p>
               <div className="lp-pricing-amount">
-                <span className="lp-currency">₹</span>3,499<span className="lp-period">/month</span>
+                <span className="lp-currency">₹</span>
+                {billingCycle === 'monthly' ? '3,499' : '2,799'}
+                <span className="lp-period">/month</span>
               </div>
             </div>
 
@@ -362,7 +551,9 @@ const LandingPage = () => {
               <h3 className="lp-pricing-name">Enterprise Plan</h3>
               <p className="lp-pricing-target">For high-traffic agencies &amp; platforms</p>
               <div className="lp-pricing-amount">
-                <span className="lp-currency">₹</span>7,999<span className="lp-period">/month</span>
+                <span className="lp-currency">₹</span>
+                {billingCycle === 'monthly' ? '7,999' : '6,399'}
+                <span className="lp-period">/month</span>
               </div>
             </div>
 
@@ -439,6 +630,8 @@ const LandingPage = () => {
 
           <div className="lp-footer-links">
             <a href="#features">Features</a>
+            <a href="#demo">Live Demo</a>
+            <a href="#calculator">Calculator</a>
             <a href="#pricing">Pricing</a>
             <a href="#faq">FAQ</a>
             <Link to="/login">Sign In</Link>
