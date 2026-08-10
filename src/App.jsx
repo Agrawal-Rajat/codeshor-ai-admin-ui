@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthContext";
+import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import AppLayout from "./layout/AppLayout";
@@ -22,6 +23,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
 
           <Route
