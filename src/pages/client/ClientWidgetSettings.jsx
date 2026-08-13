@@ -11,6 +11,9 @@ const DEFAULT_WIDGET_THEME = {
   widgetHeaderBackgroundColor: "#111827",
   widgetBotBubbleColor: "#f3f4f6",
   widgetBotTextColor: "#111827",
+  widgetHookMessageEnabled: true,
+  widgetHookMessage: "Got any questions? I'm happy to help.",
+  widgetHookMessageAvatar: "",
 };
 
 const ClientWidgetSettings = () => {
@@ -18,6 +21,7 @@ const ClientWidgetSettings = () => {
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [previewMode, setPreviewMode] = useState("desktop");
+  const [showPreviewHook, setShowPreviewHook] = useState(true);
 
   const update = (key, value) => setForm({ ...form, [key]: value });
 
@@ -42,6 +46,9 @@ const ClientWidgetSettings = () => {
             widgetHeaderBackgroundColor: config.headerBackgroundColor || DEFAULT_WIDGET_THEME.widgetHeaderBackgroundColor,
             widgetBotBubbleColor: config.botBubbleColor || DEFAULT_WIDGET_THEME.widgetBotBubbleColor,
             widgetBotTextColor: config.botTextColor || DEFAULT_WIDGET_THEME.widgetBotTextColor,
+            widgetHookMessageEnabled: config.hookMessageEnabled !== undefined ? config.hookMessageEnabled : DEFAULT_WIDGET_THEME.widgetHookMessageEnabled,
+            widgetHookMessage: config.hookMessage || DEFAULT_WIDGET_THEME.widgetHookMessage,
+            widgetHookMessageAvatar: config.hookMessageAvatar || DEFAULT_WIDGET_THEME.widgetHookMessageAvatar,
             widgetDefaultQuestions: config.defaultQuestions || [],
           });
         }
@@ -72,6 +79,9 @@ const ClientWidgetSettings = () => {
         headerBackgroundColor: form.widgetHeaderBackgroundColor,
         botBubbleColor: form.widgetBotBubbleColor,
         botTextColor: form.widgetBotTextColor,
+        hookMessageEnabled: form.widgetHookMessageEnabled,
+        hookMessage: form.widgetHookMessage,
+        hookMessageAvatar: form.widgetHookMessageAvatar,
         defaultQuestions: form.widgetDefaultQuestions,
       }
     };
@@ -122,7 +132,46 @@ const ClientWidgetSettings = () => {
               <input className="form-input" placeholder="https://example.com/icon.png" value={form.widgetLauncherIcon} onChange={(e) => update("widgetLauncherIcon", e.target.value)} />
             </div>
 
-            <div className="form-group">
+            {/* Hook Message Greeting Settings */}
+            <div style={{ marginTop: "1.5rem", padding: "1rem", borderRadius: "12px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                <label className="form-label" style={{ margin: 0, fontWeight: 600 }}>Hook Greeting Pop-up Message</label>
+                <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "0.85rem", color: "#e5e7eb" }}>
+                  <input
+                    type="checkbox"
+                    checked={form.widgetHookMessageEnabled}
+                    onChange={(e) => update("widgetHookMessageEnabled", e.target.checked)}
+                    style={{ width: "16px", height: "16px", accentColor: "#4f46e5" }}
+                  />
+                  Enable Pop-up
+                </label>
+              </div>
+
+              {form.widgetHookMessageEnabled && (
+                <>
+                  <div className="form-group" style={{ marginBottom: "12px" }}>
+                    <label className="form-label">Pop-up Greeting Text</label>
+                    <input
+                      className="form-input"
+                      placeholder="Got any questions? I'm happy to help."
+                      value={form.widgetHookMessage}
+                      onChange={(e) => update("widgetHookMessage", e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Custom Avatar Image URL (Optional)</label>
+                    <input
+                      className="form-input"
+                      placeholder="Leave empty to use Launcher Icon"
+                      value={form.widgetHookMessageAvatar}
+                      onChange={(e) => update("widgetHookMessageAvatar", e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="form-group" style={{ marginTop: "1.5rem" }}>
               <label className="form-label">Chat Background Image URL (Optional)</label>
               <input className="form-input" placeholder="https://example.com/bg.png" value={form.widgetChatBackgroundImage} onChange={(e) => update("widgetChatBackgroundImage", e.target.value)} />
             </div>
@@ -218,6 +267,97 @@ const ClientWidgetSettings = () => {
                   Mobile
                 </button>
               </div>
+
+              {/* Hook Message Pop-up Preview */}
+              {form.widgetHookMessageEnabled && showPreviewHook && (
+                <div 
+                  style={{
+                    position: "relative",
+                    background: "rgba(255, 255, 255, 0.98)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    borderRadius: "14px",
+                    padding: "18px 14px 11px 14px",
+                    maxWidth: previewMode === "mobile" ? "210px" : "220px",
+                    margin: "0 auto 12px auto",
+                    boxShadow: "0 10px 25px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.05)",
+                    border: "1px solid rgba(0, 0, 0, 0.08)",
+                    cursor: "pointer",
+                    textAlign: "center",
+                    transition: "all 0.2s ease"
+                  }}
+                  onClick={() => alert("Clicking this hook message on your website will open the chatbot modal!")}
+                >
+                  <button 
+                    style={{
+                      position: "absolute",
+                      top: "5px",
+                      right: "6px",
+                      background: "none",
+                      border: "none",
+                      color: "#94a3b8",
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      width: "20px",
+                      height: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "50%"
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowPreviewHook(false);
+                    }}
+                    title="Close pop-up"
+                  >
+                    ✕
+                  </button>
+
+                  <div style={{
+                    position: "absolute",
+                    top: "-18px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    border: "2.5px solid #ffffff",
+                    boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
+                    overflow: "hidden",
+                    background: "#f8fafc"
+                  }}>
+                    <img 
+                      src={form.widgetHookMessageAvatar || form.widgetLauncherIcon || DEFAULT_WIDGET_THEME.widgetLauncherIcon} 
+                      alt="Avatar" 
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                    />
+                  </div>
+
+                  <p style={{
+                    margin: 0,
+                    fontSize: "13px",
+                    fontWeight: 550,
+                    color: "#0f172a",
+                    lineHeight: 1.38,
+                    letterSpacing: "-0.01em",
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Inter", "Segoe UI", Roboto, sans-serif'
+                  }}>
+                    {form.widgetHookMessage || "Got any questions? I'm happy to help."}
+                  </p>
+                </div>
+              )}
+
+              {!showPreviewHook && form.widgetHookMessageEnabled && (
+                <div style={{ textAlign: "center", marginBottom: "12px" }}>
+                  <button 
+                    onClick={() => setShowPreviewHook(true)}
+                    style={{ background: "none", border: "none", color: "#6366f1", fontSize: "0.8rem", cursor: "pointer", textDecoration: "underline" }}
+                  >
+                    Reset Pop-up Preview
+                  </button>
+                </div>
+              )}
 
               <div style={previewLauncherWrapStyle}>
                 <button style={{
