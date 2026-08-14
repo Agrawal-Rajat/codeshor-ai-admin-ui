@@ -4257,3 +4257,58 @@ h1, h2, h3, h4, h5, h6, button, input, select, textarea {
   }
 }
 
+/* Light mode compatibility and readability overrides for Pricing, FAQ, and CTA */
+[data-theme='light'] .lp-pricing-name {
+  color: #18181b !important;
+}
+
+[data-theme='light'] .lp-pricing-amount {
+  color: #18181b !important;
+}
+
+[data-theme='light'] .lp-pricing-target {
+  color: #52525b !important;
+}
+
+[data-theme='light'] .lp-pricing-features li {
+  color: #27272a !important;
+}
+
+[data-theme='light'] .lp-pricing-features li strong {
+  color: #09090b !important;
+}
+
+[data-theme='light'] .lp-pricing-cta {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #18181b !important;
+}
+
+[data-theme='light'] .lp-pricing-cta:hover {
+  background: #18181b !important;
+  color: #ffffff !important;
+}
+
+[data-theme='light'] .lp-faq-question-text {
+  color: #18181b !important;
+}
+
+[data-theme='light'] .lp-faq-answer p {
+  color: #3f3f46 !important;
+}
+
+[data-theme='light'] .lp-cta-title {
+  color: #18181b !important;
+}
+
+[data-theme='light'] .lp-cta-desc {
+  color: #3f3f46 !important;
+}
+
+[data-theme='light'] .lp-cta-box {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+}
+
+
