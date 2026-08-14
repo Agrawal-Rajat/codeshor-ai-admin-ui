@@ -21,6 +21,49 @@ const LandingPage = () => {
   const [onboardingProgress, setOnboardingProgress] = useState(0);
   const [activeFeatureNode, setActiveFeatureNode] = useState(-1);
   const orbitStartRef = useRef(Date.now());
+  const [faqLogoPos, setFaqLogoPos] = useState({ top: 0, left: 0, isClosed: true });
+  const faqHeaderRef = useRef(null);
+  const faqTitleWordRef = useRef(null);
+  const faqAccordionRef = useRef(null);
+
+  useEffect(() => {
+    const updateFaqLogo = () => {
+      if (openFaq === null) {
+        if (faqTitleWordRef.current && faqHeaderRef.current) {
+          const wordEl = faqTitleWordRef.current;
+          const headerEl = faqHeaderRef.current;
+          setFaqLogoPos({
+            top: headerEl.offsetTop + wordEl.offsetTop + wordEl.offsetHeight / 2,
+            left: headerEl.offsetLeft + wordEl.offsetLeft + wordEl.offsetWidth + 35,
+            isClosed: true
+          });
+        }
+      } else {
+        if (faqAccordionRef.current && faqAccordionRef.current.children[openFaq]) {
+          const activeCard = faqAccordionRef.current.children[openFaq];
+          const accordionContainer = faqAccordionRef.current;
+          setFaqLogoPos({
+            top: accordionContainer.offsetTop + activeCard.offsetTop + 32,
+            left: activeCard.offsetLeft + activeCard.offsetWidth + 35,
+            isClosed: false
+          });
+        }
+      }
+    };
+
+    updateFaqLogo();
+    const timer = setTimeout(updateFaqLogo, 100);
+    const timer2 = setTimeout(updateFaqLogo, 350);
+
+    window.addEventListener('resize', updateFaqLogo);
+    window.addEventListener('scroll', updateFaqLogo, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(timer2);
+      window.removeEventListener('resize', updateFaqLogo);
+      window.removeEventListener('scroll', updateFaqLogo);
+    };
+  }, [openFaq]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -81,13 +124,16 @@ const LandingPage = () => {
           const progress = Math.max(0, Math.min(1, -rect.top / scrollableDist));
           setOnboardingProgress(progress);
           
-          let step = 1;
-          if (progress > 0.66) {
-            step = 3;
-          } else if (progress > 0.33) {
-            step = 2;
+          // Disable scroll-controlled step switching on mobile so the step buttons can be clicked
+          if (window.innerWidth > 1024) {
+            let step = 1;
+            if (progress > 0.66) {
+              step = 3;
+            } else if (progress > 0.33) {
+              step = 2;
+            }
+            setOnboardingStep(step);
           }
-          setOnboardingStep(step);
         }
       }
     };
@@ -95,6 +141,9 @@ const LandingPage = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const [activeCompareIndex, setActiveCompareIndex] = useState(-1);
+  const compareGridRef = useRef(null);
 
   // Track orbit angle to sync gradient border glow with logo position
   useEffect(() => {
@@ -113,6 +162,31 @@ const LandingPage = () => {
         if (diff <= TOLERANCE) { active = i; break; }
       }
       setActiveFeatureNode(prev => prev !== active ? active : prev);
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
+  // Comparison section indicator animation (slowly bottom-to-top and top-to-bottom)
+  useEffect(() => {
+    const CYCLE_DURATION = 14000; // 14 seconds total cycle
+    let rafId;
+    const tick = () => {
+      const elapsed = Date.now() % CYCLE_DURATION;
+      const progress = elapsed / CYCLE_DURATION;
+      // Triangle wave to go 0 -> 1 -> 0
+      const position = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+      
+      if (compareGridRef.current) {
+        compareGridRef.current.style.setProperty('--compare-logo-pos', `${position}`);
+      }
+
+      // Map position [0, 1] to index [0, 4]
+      // 5 sections: 0 to 0.2, 0.2 to 0.4, 0.4 to 0.6, 0.6 to 0.8, 0.8 to 1.0
+      const index = Math.floor(position * 5);
+      setActiveCompareIndex(index >= 5 ? 4 : index);
+      
       rafId = requestAnimationFrame(tick);
     };
     rafId = requestAnimationFrame(tick);
@@ -713,243 +787,600 @@ const LandingPage = () => {
       </section>
 
       {/* Interactive ROI Calculator Component */}
-      <section id="calculator" className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">ESTIMATE SAVINGS</div>
-          <h2 className="lp-section-title">See How Much Time &amp; Money You Save</h2>
-          <p className="lp-section-desc">Adjust your monthly query volume to estimate your team's savings.</p>
-        </div>
+      <section id="calculator" className="lp-section lp-roi-section">
+        <div className="lp-roi-ambient-glow"></div>
+        <div className="lp-container">
+          <div className="lp-section-header">
+            <div className="lp-section-tag">ESTIMATE SAVINGS</div>
+            <h2 className="lp-section-title"><span className="hero-text-dim">See How Much</span> <span className="hero-text-bright">Time & Money</span> <span className="hero-text-dim">You Save</span></h2>
+            <p className="lp-section-desc">Adjust your monthly query volume to estimate your team's savings with Codeshor AI.</p>
+          </div>
 
-        <div className="lp-calculator-box">
-          <div className="lp-calc-inputs">
-            <div className="lp-slider-header">
-              <label>Monthly Visitor Queries / Chats:</label>
-              <span className="lp-slider-value">{monthlyQueries.toLocaleString()} / mo</span>
+          <div className="lp-roi-calculator-wrapper">
+            {/* Left: Piggy Bank / Gullak Visualization */}
+            <div className="lp-roi-gullak-panel">
+              <div className="lp-roi-gullak-container" style={{
+                '--gullak-intensity': ((monthlyQueries - 500) / 14500)
+              }}>
+                {/* Animated floating coins */}
+                <div className="lp-roi-coins-container">
+                  {Array.from({ length: Math.min(Math.floor(monthlyQueries / 1500) + 1, 8) }).map((_, i) => (
+                    <div 
+                      key={i} 
+                      className="lp-roi-coin"
+                      style={{
+                        '--coin-delay': `${i * 0.4}s`,
+                        '--coin-x': `${20 + (i * 12) % 60}%`,
+                        opacity: 1
+                      }}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
+                        <text x="12" y="16" textAnchor="middle" fontSize="11" fontWeight="700" fill="currentColor">₹</text>
+                      </svg>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Futuristic Gullak/Vault SVG */}
+                <svg className="lp-roi-gullak-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* Glow ring behind */}
+                  <circle cx="100" cy="100" r="85" stroke={`rgba(${Math.round(74 + ((monthlyQueries - 500) / 14500) * 0)}, ${Math.round(180 + ((monthlyQueries - 500) / 14500) * 60)}, ${Math.round(100 + ((monthlyQueries - 500) / 14500) * 20)}, 0.15)`} strokeWidth="2" strokeDasharray="6 4" className="lp-roi-gullak-ring"/>
+                  
+                  {/* Main body - rounded vault/piggy */}
+                  <ellipse cx="100" cy="108" rx="58" ry="52" 
+                    fill={`rgba(${Math.round(30 - ((monthlyQueries - 500) / 14500) * 15)}, ${Math.round(120 + ((monthlyQueries - 500) / 14500) * 80)}, ${Math.round(70 + ((monthlyQueries - 500) / 14500) * 30)}, 0.2)`}
+                    stroke={`rgb(${Math.round(74 + ((monthlyQueries - 500) / 14500) * 0)}, ${Math.round(180 + ((monthlyQueries - 500) / 14500) * 60)}, ${Math.round(100 + ((monthlyQueries - 500) / 14500) * 20)})`}
+                    strokeWidth="2"
+                  />
+                  
+                  {/* Coin slot on top */}
+                  <rect x="82" y="56" width="36" height="6" rx="3" 
+                    fill={`rgb(${Math.round(74)}, ${Math.round(180 + ((monthlyQueries - 500) / 14500) * 60)}, ${Math.round(100 + ((monthlyQueries - 500) / 14500) * 20)})`}
+                    opacity="0.8"
+                  />
+                  
+                  {/* Inner glow circle */}
+                  <circle cx="100" cy="110" r="28" 
+                    fill={`rgba(${Math.round(30)}, ${Math.round(140 + ((monthlyQueries - 500) / 14500) * 80)}, ${Math.round(80 + ((monthlyQueries - 500) / 14500) * 30)}, 0.15)`}
+                    stroke={`rgba(${Math.round(74)}, ${Math.round(200 + ((monthlyQueries - 500) / 14500) * 40)}, ${Math.round(120)}, 0.4)`}
+                    strokeWidth="1"
+                  />
+                  
+                  {/* Rupee symbol in center */}
+                  <text x="100" y="118" textAnchor="middle" fontSize="28" fontWeight="800" 
+                    fill={`rgb(${Math.round(100 + ((monthlyQueries - 500) / 14500) * 50)}, ${Math.round(220 + ((monthlyQueries - 500) / 14500) * 35)}, ${Math.round(140 + ((monthlyQueries - 500) / 14500) * 30)})`}
+                  >₹</text>
+                  
+                  {/* Legs */}
+                  <ellipse cx="72" cy="158" rx="10" ry="6"
+                    fill={`rgba(${Math.round(74)}, ${Math.round(180 + ((monthlyQueries - 500) / 14500) * 60)}, ${Math.round(100)}, 0.3)`}
+                  />
+                  <ellipse cx="128" cy="158" rx="10" ry="6"
+                    fill={`rgba(${Math.round(74)}, ${Math.round(180 + ((monthlyQueries - 500) / 14500) * 60)}, ${Math.round(100)}, 0.3)`}
+                  />
+                  
+                  {/* Savings fill level - animated bar inside piggy */}
+                  <rect 
+                    x="52" 
+                    y={160 - ((monthlyQueries - 500) / 14500) * 90} 
+                    width="96" 
+                    height={((monthlyQueries - 500) / 14500) * 90}
+                    rx="4"
+                    fill={`rgba(${Math.round(50)}, ${Math.round(180 + ((monthlyQueries - 500) / 14500) * 60)}, ${Math.round(100 + ((monthlyQueries - 500) / 14500) * 20)}, 0.12)`}
+                    style={{ transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)' }}
+                  />
+                </svg>
+
+                {/* Plus money badges floating */}
+                <div className="lp-roi-money-badge" style={{
+                  color: `rgb(${Math.round(100 + ((monthlyQueries - 500) / 14500) * 55)}, ${Math.round(230 + ((monthlyQueries - 500) / 14500) * 25)}, ${Math.round(150 + ((monthlyQueries - 500) / 14500) * 20)})`
+                }}>
+                  +₹{estimatedMoneySaved.toLocaleString()}
+                </div>
+              </div>
+
+              {/* Savings meter bar */}
+              <div className="lp-roi-meter">
+                <div className="lp-roi-meter-label">Savings Intensity</div>
+                <div className="lp-roi-meter-track">
+                  <div 
+                    className="lp-roi-meter-fill" 
+                    style={{ 
+                      width: `${((monthlyQueries - 500) / 14500) * 100}%`,
+                      background: `linear-gradient(90deg, 
+                        hsl(${140 + ((monthlyQueries - 500) / 14500) * 20}, 60%, 45%), 
+                        hsl(${140 + ((monthlyQueries - 500) / 14500) * 20}, 75%, ${35 + ((monthlyQueries - 500) / 14500) * 15}%))`
+                    }}
+                  ></div>
+                </div>
+              </div>
             </div>
-            <input 
-              type="range" 
-              min="500" 
-              max="15000" 
-              step="500"
-              value={monthlyQueries}
-              onChange={(e) => setMonthlyQueries(Number(e.target.value))}
-              className="lp-range-slider"
+
+            {/* Right: Controls + Results */}
+            <div className="lp-roi-controls-panel">
+              {/* Slider section */}
+              <div className="lp-roi-slider-card">
+                <div className="lp-roi-slider-header">
+                  <div className="lp-roi-slider-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <label className="lp-roi-slider-title">Monthly Visitor Queries</label>
+                    <p className="lp-roi-slider-sub">Chats handled by AI</p>
+                  </div>
+                </div>
+                <div className="lp-roi-slider-value-display">
+                  <span className="lp-roi-slider-number">{monthlyQueries.toLocaleString()}</span>
+                  <span className="lp-roi-slider-unit">/ month</span>
+                </div>
+                <div className="lp-roi-slider-wrapper">
+                  <input 
+                    type="range" 
+                    min="500" 
+                    max="15000" 
+                    step="500"
+                    value={monthlyQueries}
+                    onChange={(e) => setMonthlyQueries(Number(e.target.value))}
+                    className="lp-roi-range-slider"
+                    style={{
+                      '--slider-progress': `${((monthlyQueries - 500) / 14500) * 100}%`
+                    }}
+                  />
+                  <div className="lp-roi-slider-marks">
+                    <span>500</span>
+                    <span>5K</span>
+                    <span>10K</span>
+                    <span>15K</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Results cards */}
+              <div className="lp-roi-results-grid">
+                <div className="lp-roi-result-card">
+                  <div className="lp-roi-result-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                  </div>
+                  <div className="lp-roi-result-data">
+                    <div className="lp-roi-result-number">{hoursSavedPerMonth}<span className="lp-roi-result-suffix">hrs</span></div>
+                    <div className="lp-roi-result-label">Support Hours Saved / mo</div>
+                  </div>
+                </div>
+
+                <div className="lp-roi-result-card lp-roi-result-highlight">
+                  <div className="lp-roi-result-icon highlight-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="1" x2="12" y2="23"/>
+                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                  </div>
+                  <div className="lp-roi-result-data">
+                    <div className="lp-roi-result-number lp-roi-highlight-number">₹{estimatedMoneySaved.toLocaleString()}</div>
+                    <div className="lp-roi-result-label">Estimated Monthly Savings</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Annual projection */}
+              <div className="lp-roi-annual-card">
+                <div className="lp-roi-annual-inner">
+                  <div className="lp-roi-annual-left">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                      <polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                    <span>Annual Projection</span>
+                  </div>
+                  <div className="lp-roi-annual-amount">₹{(estimatedMoneySaved * 12).toLocaleString()}<span>/yr</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Matrix - Futuristic Redesign */}
+      <section className="lp-section lp-compare-section">
+        <div className="lp-compare-ambient"></div>
+        <div className="lp-container">
+          <div className="lp-section-header">
+            <div className="lp-section-tag">WHY CHOOSE US</div>
+            <h2 className="lp-section-title"><span className="hero-text-dim">Why Companies Pick</span> <span className="hero-text-bright">Codeshor AI</span></h2>
+            <p className="lp-section-desc">See why modern B2B companies are switching to our autonomous AI engine over legacy chatbots.</p>
+          </div>
+
+          {/* Comparison Header Labels */}
+          <div className="lp-compare-header-row">
+            <div className="lp-compare-header-feature">Feature</div>
+            <div className="lp-compare-header-legacy">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              Legacy Chatbots
+            </div>
+            <div className="lp-compare-header-ai">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Codeshor AI
+            </div>
+          </div>
+
+          {/* Comparison Cards */}
+          <div className="lp-compare-grid" ref={compareGridRef}>
+            {/* Dynamic Codeshor AI Moving Logo Indicator */}
+            <div 
+              className="lp-compare-moving-logo lp-hide-mobile"
+              style={{
+                position: 'absolute',
+                right: '-20px',
+                transform: 'translateY(-50%)',
+                zIndex: 10,
+                width: '40px',
+                height: '40px',
+                background: 'var(--lp-card-bg)',
+                borderRadius: '50%',
+                border: '2px solid var(--lp-primary)',
+                boxShadow: '0 0 15px rgba(225, 29, 72, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                pointerEvents: 'none',
+                top: 'calc(10% + var(--compare-logo-pos, 0) * 80%)',
+                transition: 'top 0.1s linear'
+              }}
+            >
+              <img 
+                src={chatbotLogo} 
+                alt="Codeshor AI Moving Indicator" 
+                style={{ width: '24px', height: '24px', objectFit: 'contain' }} 
+              />
+            </div>
+
+            {/* Row 1 */}
+            <div className={`lp-compare-card ${activeCompareIndex === 0 ? 'active' : ''}`}>
+              <div className="lp-compare-feature-col">
+                <div className="lp-compare-feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <span className="lp-compare-feature-name">Hallucination Protection</span>
+              </div>
+              <div className="lp-compare-legacy-col">
+                <span className="lp-compare-x-icon">✕</span>
+                <span>Frequent wrong answers</span>
+              </div>
+              <div className="lp-compare-ai-col">
+                <span className="lp-compare-check-icon">✓</span>
+                <span>100% Context Strict (RAG)</span>
+              </div>
+            </div>
+
+            {/* Row 2 */}
+            <div className={`lp-compare-card ${activeCompareIndex === 1 ? 'active' : ''}`}>
+              <div className="lp-compare-feature-col">
+                <div className="lp-compare-feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                </div>
+                <span className="lp-compare-feature-name">Voice Note Support</span>
+              </div>
+              <div className="lp-compare-legacy-col">
+                <span className="lp-compare-x-icon">✕</span>
+                <span>Text Only</span>
+              </div>
+              <div className="lp-compare-ai-col">
+                <span className="lp-compare-check-icon">✓</span>
+                <span>Speech-to-Text &amp; Audio AI</span>
+              </div>
+            </div>
+
+            {/* Row 3 */}
+            <div className={`lp-compare-card ${activeCompareIndex === 2 ? 'active' : ''}`}>
+              <div className="lp-compare-feature-col">
+                <div className="lp-compare-feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </div>
+                <span className="lp-compare-feature-name">Auto-Learning Loop</span>
+              </div>
+              <div className="lp-compare-legacy-col">
+                <span className="lp-compare-x-icon">✕</span>
+                <span>Manual FAQ setup</span>
+              </div>
+              <div className="lp-compare-ai-col">
+                <span className="lp-compare-check-icon">✓</span>
+                <span>Knowledge Gap Auto-Tracker</span>
+              </div>
+            </div>
+
+            {/* Row 4 */}
+            <div className={`lp-compare-card ${activeCompareIndex === 3 ? 'active' : ''}`}>
+              <div className="lp-compare-feature-col">
+                <div className="lp-compare-feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <span className="lp-compare-feature-name">Response Latency</span>
+              </div>
+              <div className="lp-compare-legacy-col">
+                <span className="lp-compare-warn-icon">⚠</span>
+                <span>3-5 seconds</span>
+              </div>
+              <div className="lp-compare-ai-col">
+                <span className="lp-compare-bolt-icon">⚡</span>
+                <span>&lt; 50ms Fast-Rules</span>
+              </div>
+            </div>
+
+            {/* Row 5 */}
+            <div className={`lp-compare-card ${activeCompareIndex === 4 ? 'active' : ''}`}>
+              <div className="lp-compare-feature-col">
+                <div className="lp-compare-feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <span className="lp-compare-feature-name">Lead Generation</span>
+              </div>
+              <div className="lp-compare-legacy-col">
+                <span className="lp-compare-x-icon">✕</span>
+                <span>Complex integrations required</span>
+              </div>
+              <div className="lp-compare-ai-col">
+                <span className="lp-compare-check-icon">✓</span>
+                <span>Native Pre-Chat Qualification</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section - Futuristic Redesign */}
+      <section id="pricing" className="lp-section lp-pricing-section">
+        <div className="lp-pricing-ambient"></div>
+        <div className="lp-container">
+          <div className="lp-section-header">
+            <div className="lp-section-tag">TRANSPARENT PRICING</div>
+            <h2 className="lp-section-title"><span className="hero-text-dim">Plans Built for Every Stage of</span> <span className="hero-text-bright">Growth</span></h2>
+            <p className="lp-section-desc">Straightforward pricing in INR with zero hidden fees. Scale as your traffic expands.</p>
+            
+            {/* Billing Cycle Toggle */}
+            <div className="lp-billing-toggle">
+              <button 
+                className={`lp-billing-btn ${billingCycle === 'monthly' ? 'active' : ''}`}
+                onClick={() => setBillingCycle('monthly')}
+              >
+                Monthly Billing
+              </button>
+              <button 
+                className={`lp-billing-btn ${billingCycle === 'annual' ? 'active' : ''}`}
+                onClick={() => setBillingCycle('annual')}
+              >
+                Yearly Billing <span className="lp-discount-badge">Save 20%</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="lp-pricing-grid">
+            {/* Starter Plan */}
+            <div className="lp-pricing-card">
+              <div className="lp-pricing-badge-logo">
+                <img src={chatbotLogo} alt="Codeshor AI Badge" />
+              </div>
+              <div>
+                <div className="lp-pricing-tier-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+                </div>
+                <div className="lp-pricing-header">
+                  <h3 className="lp-pricing-name">Starter Plan</h3>
+                  <p className="lp-pricing-target">Ideal for local businesses &amp; startups</p>
+                  <div className="lp-pricing-amount">
+                    <span className="lp-currency">₹</span>
+                    {billingCycle === 'monthly' ? '1,499' : '1,199'}
+                    <span className="lp-period">/month</span>
+                  </div>
+                </div>
+
+                <div className="lp-pricing-divider"></div>
+
+                <ul className="lp-pricing-features">
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> <strong>1,000 AI Text Responses</strong> / mo</li>
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> <strong>100 Voice Interactions</strong></li>
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> Basic Widget Customization</li>
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> Standard Knowledge Base</li>
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> Email Support</li>
+                </ul>
+              </div>
+
+              <a href="tel:+919106414283" className="lp-pricing-cta">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Contact Sales
+              </a>
+            </div>
+
+            {/* Growth Plan - Popular */}
+            <div className="lp-pricing-card popular">
+              <div className="lp-pricing-badge-logo popular-logo">
+                <img src={chatbotLogo} alt="Codeshor AI Premium Badge" />
+              </div>
+              <div className="lp-popular-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                MOST POPULAR • 93% ROI
+              </div>
+
+              <div>
+                <div className="lp-pricing-tier-icon popular-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <div className="lp-pricing-header">
+                  <h3 className="lp-pricing-name">Growth Plan</h3>
+                  <p className="lp-pricing-target">Perfect for E-commerce &amp; Clinics</p>
+                  <div className="lp-pricing-amount">
+                    <span className="lp-currency">₹</span>
+                    {billingCycle === 'monthly' ? '3,499' : '2,799'}
+                    <span className="lp-period">/month</span>
+                  </div>
+                </div>
+
+                <div className="lp-pricing-divider"></div>
+
+                <ul className="lp-pricing-features">
+                  <li><span className="lp-pricing-check popular-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> <strong>3,000 AI Text Responses</strong> / mo</li>
+                  <li><span className="lp-pricing-check popular-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> <strong>400 Voice Interactions</strong></li>
+                  <li><span className="lp-pricing-check popular-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> Advanced Analytics &amp; Lead Sync</li>
+                  <li><span className="lp-pricing-check popular-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> <strong>Remove Watermark</strong></li>
+                  <li><span className="lp-pricing-check popular-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> Knowledge Gap Auto-Tracker</li>
+                  <li><span className="lp-pricing-check popular-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> Priority Chat &amp; Email Support</li>
+                </ul>
+              </div>
+
+              <a href="tel:+919106414283" className="lp-pricing-cta popular-cta">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Contact Sales
+              </a>
+            </div>
+
+            {/* Enterprise Plan */}
+            <div className="lp-pricing-card">
+              <div className="lp-pricing-badge-logo">
+                <img src={chatbotLogo} alt="Codeshor AI Enterprise Badge" />
+              </div>
+              <div>
+                <div className="lp-pricing-tier-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                </div>
+                <div className="lp-pricing-header">
+                  <h3 className="lp-pricing-name">Enterprise Plan</h3>
+                  <p className="lp-pricing-target">For high-traffic agencies &amp; platforms</p>
+                  <div className="lp-pricing-amount">
+                    <span className="lp-currency">₹</span>
+                    {billingCycle === 'monthly' ? '7,999' : '6,399'}
+                    <span className="lp-period">/month</span>
+                  </div>
+                </div>
+
+                <div className="lp-pricing-divider"></div>
+
+                <ul className="lp-pricing-features">
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> <strong>10,000 AI Text Responses</strong> / mo</li>
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> <strong>1,500 Voice Interactions</strong></li>
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> Custom API Integrations</li>
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> Dedicated Account Manager</li>
+                  <li><span className="lp-pricing-check"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></span> 99.9% SLA &amp; Priority Support</li>
+                </ul>
+              </div>
+
+              <a href="tel:+919106414283" className="lp-pricing-cta">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Contact Sales
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section - Futuristic Redesign */}
+      <section id="faq" className="lp-section lp-faq-section">
+        <div className="lp-faq-ambient"></div>
+        <div className="lp-container" style={{ position: 'relative' }}>
+          <div className="lp-section-header" ref={faqHeaderRef}>
+            <div className="lp-section-tag">GOT QUESTIONS?</div>
+            <h2 className="lp-section-title"><span className="hero-text-dim">Frequently Asked</span> <span className="hero-text-bright" ref={faqTitleWordRef}>Questions</span></h2>
+            <p className="lp-section-desc">Everything you need to know about setting up and scaling your custom AI assistant.</p>
+          </div>
+
+          {/* Dynamic FAQ Chatbot Logo Indicator */}
+          <div 
+            className={`lp-faq-moving-logo ${faqLogoPos.isClosed ? 'is-closed' : 'is-open'}`}
+            style={{
+              position: 'absolute',
+              top: `${faqLogoPos.top}px`,
+              left: `${faqLogoPos.left}px`,
+              transform: 'translate(-50%, -50%)',
+              transition: 'top 0.5s cubic-bezier(0.25, 1, 0.5, 1), left 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
+              zIndex: 10,
+              width: '44px',
+              height: '44px',
+              background: 'var(--lp-card-bg)',
+              borderRadius: '50%',
+              border: '2px solid var(--lp-primary)',
+              boxShadow: '0 0 20px rgba(225, 29, 72, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none'
+            }}
+          >
+            <img 
+              src={chatbotLogo} 
+              alt="Codeshor AI Moving Indicator" 
+              style={{ width: '24px', height: '24px', objectFit: 'contain' }} 
             />
           </div>
 
-          <div className="lp-calc-results">
-            <div className="lp-calc-card">
-              <div className="lp-calc-number">{hoursSavedPerMonth} hrs</div>
-              <div className="lp-calc-label">Support Hours Saved / mo</div>
-            </div>
-            <div className="lp-calc-card highlight">
-              <div className="lp-calc-number">₹{estimatedMoneySaved.toLocaleString()}</div>
-              <div className="lp-calc-label">Estimated Monthly Savings</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Comparison Matrix Component */}
-      <section className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">WHY CHOOSE US</div>
-          <h2 className="lp-section-title">Codeshor AI vs Legacy Chatbots</h2>
-          <p className="lp-section-desc">See why modern B2B companies are switching to our autonomous AI engine.</p>
-        </div>
-
-        <div className="lp-comparison-table-wrapper">
-          <table className="lp-comparison-table">
-            <thead>
-              <tr>
-                <th>Feature</th>
-                <th>Legacy Chatbots</th>
-                <th className="lp-highlight-col">Codeshor AI</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Hallucination Protection</td>
-                <td>❌ Frequent wrong answers</td>
-                <td className="lp-highlight-col">✓ 100% Context Strict (RAG)</td>
-              </tr>
-              <tr>
-                <td>Voice Note Support</td>
-                <td>❌ Text Only</td>
-                <td className="lp-highlight-col">✓ Speech-to-Text &amp; Audio AI</td>
-              </tr>
-              <tr>
-                <td>Auto-Learning Loop</td>
-                <td>❌ Manual FAQ setup</td>
-                <td className="lp-highlight-col">✓ Knowledge Gap Auto-Tracker</td>
-              </tr>
-              <tr>
-                <td>Response Latency</td>
-                <td>⚠️ 3-5 seconds</td>
-                <td className="lp-highlight-col">⚡ &lt; 50ms Fast-Rules</td>
-              </tr>
-              <tr>
-                <td>Lead Generation</td>
-                <td>❌ Complex integrations required</td>
-                <td className="lp-highlight-col">✓ Native Pre-Chat Qualification</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">TRANSPARENT PRICING</div>
-          <h2 className="lp-section-title">Plans Built for Every Stage of Growth</h2>
-          <p className="lp-section-desc">Straightforward pricing in INR with zero hidden fees. Scale as your traffic expands.</p>
-          
-          {/* Billing Cycle Toggle */}
-          <div className="lp-billing-toggle">
-            <button 
-              className={`lp-billing-btn ${billingCycle === 'monthly' ? 'active' : ''}`}
-              onClick={() => setBillingCycle('monthly')}
-            >
-              Monthly Billing
-            </button>
-            <button 
-              className={`lp-billing-btn ${billingCycle === 'annual' ? 'active' : ''}`}
-              onClick={() => setBillingCycle('annual')}
-            >
-              Yearly Billing <span className="lp-discount-badge">Save 20%</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="lp-pricing-grid">
-          {/* Starter Plan */}
-          <div className="lp-pricing-card">
-            <div className="lp-pricing-header">
-              <h3 className="lp-pricing-name">Starter Plan</h3>
-              <p className="lp-pricing-target">Ideal for local businesses &amp; startups</p>
-              <div className="lp-pricing-amount">
-                <span className="lp-currency">₹</span>
-                {billingCycle === 'monthly' ? '1,499' : '1,199'}
-                <span className="lp-period">/month</span>
-              </div>
-            </div>
-
-            <ul className="lp-pricing-features">
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>1,000 AI Text Responses</strong> / mo</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>100 Voice Interactions</strong></li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Basic Widget Customization</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Standard Knowledge Base</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Email Support</li>
-            </ul>
-
-            <Link to="/login" className="lp-btn lp-btn-secondary lp-btn-full">
-              Get Started with Starter
-            </Link>
-          </div>
-
-          {/* Growth Plan */}
-          <div className="lp-pricing-card popular">
-            <div className="lp-popular-badge">🔥 MOST POPULAR • 93% ROI</div>
-
-            <div className="lp-pricing-header">
-              <h3 className="lp-pricing-name">Growth Plan</h3>
-              <p className="lp-pricing-target">Perfect for E-commerce &amp; Clinics</p>
-              <div className="lp-pricing-amount">
-                <span className="lp-currency">₹</span>
-                {billingCycle === 'monthly' ? '3,499' : '2,799'}
-                <span className="lp-period">/month</span>
-              </div>
-            </div>
-
-            <ul className="lp-pricing-features">
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>3,000 AI Text Responses</strong> / mo</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>400 Voice Interactions</strong></li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Advanced Analytics &amp; Lead Sync</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>Remove Watermark</strong></li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Knowledge Gap Auto-Tracker</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Priority Chat &amp; Email Support</li>
-            </ul>
-
-            <Link to="/login" className="lp-btn lp-btn-primary lp-btn-full">
-              Upgrade to Growth Plan
-            </Link>
-          </div>
-
-          {/* Enterprise Plan */}
-          <div className="lp-pricing-card">
-            <div className="lp-pricing-header">
-              <h3 className="lp-pricing-name">Enterprise Plan</h3>
-              <p className="lp-pricing-target">For high-traffic agencies &amp; platforms</p>
-              <div className="lp-pricing-amount">
-                <span className="lp-currency">₹</span>
-                {billingCycle === 'monthly' ? '7,999' : '6,399'}
-                <span className="lp-period">/month</span>
-              </div>
-            </div>
-
-            <ul className="lp-pricing-features">
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>10,000 AI Text Responses</strong> / mo</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>1,500 Voice Interactions</strong></li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Custom API Integrations</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Dedicated Account Manager</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> 99.9% SLA &amp; Priority Support</li>
-            </ul>
-
-            <Link to="/login" className="lp-btn lp-btn-secondary lp-btn-full">
-              Contact Sales
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section id="faq" className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">GOT QUESTIONS?</div>
-          <h2 className="lp-section-title">Frequently Asked Questions</h2>
-          <p className="lp-section-desc">Everything you need to know about setting up and scaling your AI chatbot.</p>
-        </div>
-
-        <div className="lp-faq-accordion">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className={`lp-faq-item ${openFaq === index ? 'open' : ''}`}
-              onClick={() => toggleFaq(index)}
-            >
-              <div className="lp-faq-question">
-                <span>{faq.q}</span>
-                <span className="lp-faq-icon">{openFaq === index ? '−' : '+'}</span>
-              </div>
-              {openFaq === index && (
-                <div className="lp-faq-answer">
-                  <p>{faq.a}</p>
+          <div className="lp-faq-accordion" ref={faqAccordionRef}>
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div
+                  key={index}
+                  className={`lp-faq-item ${isOpen ? 'open' : ''}`}
+                  onClick={() => toggleFaq(index)}
+                >
+                  <div className="lp-faq-question">
+                    <span className="lp-faq-question-text">{faq.q}</span>
+                    <span className="lp-faq-toggle-btn">
+                      <svg 
+                        width="18" 
+                        height="18" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2.5" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                        className="lp-faq-chevron-icon"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </span>
+                  </div>
+                  <div className="lp-faq-answer-wrapper" style={{
+                    maxHeight: isOpen ? '200px' : '0',
+                    opacity: isOpen ? 1 : 0
+                  }}>
+                    <div className="lp-faq-answer">
+                      <p>{faq.a}</p>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - Futuristic Redesign */}
       <section className="lp-cta-section lp-container">
         <div className="lp-cta-box">
+          <div className="lp-cta-glow"></div>
           <h2 className="lp-cta-title">Ready to Automate Support &amp; Skyrocket Leads?</h2>
           <p className="lp-cta-desc">Join forward-thinking companies powered by Codeshor AI today.</p>
           <div className="lp-cta-actions">
-            <Link to="/login" className="lp-btn lp-btn-primary lp-btn-lg">
+            <Link to="/login" className="lp-btn lp-btn-primary lp-btn-lg lp-cta-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
               Start Free Trial Now
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer - Futuristic Redesign */}
       <footer className="lp-footer lp-container">
         <div className="lp-footer-content">
           <div className="lp-footer-brand">
             <div className="lp-nav-logo">
+              <img src={chatbotLogo} alt="Codeshor Logo" className="lp-logo-icon" />
               <span className="lp-logo-text">Codeshor</span>
               <span className="lp-logo-badge">AI</span>
             </div>
@@ -959,14 +1390,32 @@ const LandingPage = () => {
             </div>
           </div>
 
-          <div className="lp-footer-links">
-            <a href="#how-easy">How Easy It Is</a>
-            <a href="#features">Features</a>
-            <a href="#demo">Live Demo</a>
-            <a href="#calculator">Calculator</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#faq">FAQ</a>
-            <Link to="/login">Sign In</Link>
+          <div className="lp-footer-links-grid">
+            <div className="lp-footer-link-col">
+              <h4>Site Links</h4>
+              <a href="#home">Home</a>
+              <a href="#how-easy">How Easy It Is</a>
+              <a href="#features">Features</a>
+              <a href="#demo">Live Demo</a>
+              <a href="#calculator">Calculator</a>
+              <a href="#pricing">Pricing</a>
+              <a href="#faq">FAQ</a>
+            </div>
+            <div className="lp-footer-link-col">
+              <h4>Required &amp; Legal</h4>
+              <Link to="/privacy">Privacy Policy</Link>
+              <Link to="/terms">Terms of Service</Link>
+              <Link to="/cookies">Cookie Settings</Link>
+              <Link to="/support">Contact Support</Link>
+              <Link to="/login">Sign In</Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Giant CODESHOR AI Text Block */}
+        <div className="lp-footer-giant-text-container">
+          <div className="lp-footer-giant-text" data-text="CODESHOR AI">
+            CODESHOR AI
           </div>
         </div>
 
@@ -974,6 +1423,23 @@ const LandingPage = () => {
           <p>&copy; {new Date().getFullYear()} Codeshor AI. All rights reserved.</p>
         </div>
       </footer>
+
+      {/* Luxury Bottom House Banner (Exactly matches top banner) */}
+      <div className="lp-top-banner lp-bottom-banner">
+        <div className="lp-house-badge-container">
+          <span className="lp-house-prefix">From the house of</span>
+          <div className="lp-magnify-brand">
+            <span style={{ fontSize: '16px', fontWeight: 400, color: '#a1a1aa' }}>C</span>
+            <span style={{ fontSize: '17px', fontWeight: 500, color: '#d4d4d8' }}>O</span>
+            <span style={{ fontSize: '18px', fontWeight: 600, color: '#e4e4e7' }}>D</span>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#fafafa' }}>E</span>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#fafafa' }}>S</span>
+            <span style={{ fontSize: '18px', fontWeight: 600, color: '#e4e4e7' }}>H</span>
+            <span style={{ fontSize: '17px', fontWeight: 500, color: '#d4d4d8' }}>O</span>
+            <span style={{ fontSize: '16px', fontWeight: 400, color: '#a1a1aa' }}>R</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
