@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import characterImg from '../assets/codeshor-ai.png';
-import chatbotLogo from '../assets/chatbot_logo.png';
+
+// Cloudinary optimized images
+const characterImg = "https://res.cloudinary.com/dgdqeidxb/image/upload/q_auto,f_auto,w_800/v1786740500/codeshor-ai_o2kosx.png";
+const chatbotLogo = "https://res.cloudinary.com/dgdqeidxb/image/upload/q_auto,f_auto,w_96/v1786740514/chatbot_logo_zzebkr.png";
+
 import '../styles/landing.css';
 
 // Landing page section components
-import Nav from '../components/landing/Nav';
-import Hero from '../components/landing/Hero';
-import Onboarding from '../components/landing/Onboarding';
-import Features from '../components/landing/Features';
-import Calculator from '../components/landing/Calculator';
-import Compare from '../components/landing/Compare';
-import Pricing from '../components/landing/Pricing';
-import FAQ from '../components/landing/FAQ';
-import CTA from '../components/landing/CTA';
-import Footer from '../components/landing/Footer';
+import Nav from '../components/landing/Navbar/Nav';
+import Hero from '../components/landing/Hero/Hero';
+import Onboarding from '../components/landing/Onboarding/Onboarding';
+import Features from '../components/landing/Features/Features';
+import Calculator from '../components/landing/RoiCalculator/Calculator';
+import Compare from '../components/landing/ComparisonMatrix/Compare';
+import Pricing from '../components/landing/Pricing/Pricing';
+import FAQ from '../components/landing/Faq/FAQ';
+import CTA from '../components/landing/Cta/CTA';
+import Footer from '../components/landing/Footer/Footer';
 
 const LandingPage = () => {
   const [theme, setTheme] = useState('dark');
