@@ -1,14 +1,210 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+
+// Cloudinary optimized images
+const characterImg = "https://res.cloudinary.com/dgdqeidxb/image/upload/q_auto,f_auto,w_800/v1786740500/codeshor-ai_o2kosx.png";
+const chatbotLogo = "https://res.cloudinary.com/dgdqeidxb/image/upload/q_auto,f_auto,w_96/v1786740514/chatbot_logo_zzebkr.png";
+
 import '../styles/landing.css';
 
+// Landing page section components
+import Nav from '../components/landing/Navbar/Nav';
+import Hero from '../components/landing/Hero/Hero';
+import Onboarding from '../components/landing/Onboarding/Onboarding';
+import Features from '../components/landing/Features/Features';
+import Calculator from '../components/landing/RoiCalculator/Calculator';
+import Compare from '../components/landing/ComparisonMatrix/Compare';
+import Pricing from '../components/landing/Pricing/Pricing';
+import FAQ from '../components/landing/Faq/FAQ';
+import CTA from '../components/landing/Cta/CTA';
+import Footer from '../components/landing/Footer/Footer';
+
 const LandingPage = () => {
+  const [theme, setTheme] = useState('dark');
   const [openFaq, setOpenFaq] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [heroTab, setHeroTab] = useState('chat');
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [monthlyQueries, setMonthlyQueries] = useState(2500);
   const [onboardingStep, setOnboardingStep] = useState(1);
+  const [activeSection, setActiveSection] = useState('home');
+  const [scrolled, setScrolled] = useState(false);
+  const [isNavHidden, setIsNavHidden] = useState(false);
+  const lastScrollY = useRef(0);
+  const scrollFillRef = useRef(null);
+  const onboardingRef = useRef(null);
+  const [onboardingProgress, setOnboardingProgress] = useState(0);
+  const [activeFeatureNode, setActiveFeatureNode] = useState(-1);
+  const orbitStartRef = useRef(Date.now());
+  const [faqLogoPos, setFaqLogoPos] = useState({ top: 0, left: 0, isClosed: true });
+  const faqHeaderRef = useRef(null);
+  const faqTitleWordRef = useRef(null);
+  const faqAccordionRef = useRef(null);
+
+  useEffect(() => {
+    const updateFaqLogo = () => {
+      if (openFaq === null) {
+        if (faqTitleWordRef.current && faqHeaderRef.current) {
+          const wordEl = faqTitleWordRef.current;
+          const headerEl = faqHeaderRef.current;
+          setFaqLogoPos({
+            top: headerEl.offsetTop + wordEl.offsetTop + wordEl.offsetHeight / 2,
+            left: headerEl.offsetLeft + wordEl.offsetLeft + wordEl.offsetWidth + 35,
+            isClosed: true
+          });
+        }
+      } else {
+        if (faqAccordionRef.current && faqAccordionRef.current.children[openFaq]) {
+          const activeCard = faqAccordionRef.current.children[openFaq];
+          const accordionContainer = faqAccordionRef.current;
+          setFaqLogoPos({
+            top: accordionContainer.offsetTop + activeCard.offsetTop + 32,
+            left: activeCard.offsetLeft + activeCard.offsetWidth + 35,
+            isClosed: false
+          });
+        }
+      }
+    };
+
+    updateFaqLogo();
+    const timer = setTimeout(updateFaqLogo, 100);
+    const timer2 = setTimeout(updateFaqLogo, 350);
+
+    window.addEventListener('resize', updateFaqLogo);
+    window.addEventListener('scroll', updateFaqLogo, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(timer2);
+      window.removeEventListener('resize', updateFaqLogo);
+      window.removeEventListener('scroll', updateFaqLogo);
+    };
+  }, [openFaq]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const sectionIds = ['home', 'how-easy', 'features', 'demo', 'calculator', 'pricing', 'faq'];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-40% 0px -40% 0px', threshold: 0 }
+    );
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 10);
+      
+      if (currentScrollY > 100) {
+        if (currentScrollY < lastScrollY.current) {
+          // Scrolling UP -> Hide navbar (per user request)
+          setIsNavHidden(true);
+        } else if (currentScrollY > lastScrollY.current) {
+          // Scrolling DOWN -> Show navbar
+          setIsNavHidden(false);
+        }
+      } else {
+        setIsNavHidden(false);
+      }
+      
+      lastScrollY.current = currentScrollY;
+
+      // Calculate scroll progress percentage directly on DOM for smoothness
+      if (scrollFillRef.current) {
+        const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (totalHeight > 0) {
+          const progress = (currentScrollY / totalHeight) * 100;
+          scrollFillRef.current.style.height = `${progress}%`;
+        }
+      }
+
+      // Track progress of onboarding section (only on desktop viewports)
+      if (onboardingRef.current && window.innerWidth > 1024) {
+        const rect = onboardingRef.current.getBoundingClientRect();
+        const scrollableDist = rect.height - window.innerHeight;
+        if (scrollableDist > 0) {
+          const progress = Math.max(0, Math.min(1, -rect.top / scrollableDist));
+          setOnboardingProgress(progress);
+          
+          let step = 1;
+          if (progress > 0.66) {
+            step = 3;
+          } else if (progress > 0.33) {
+            step = 2;
+          }
+          setOnboardingStep(step);
+        }
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const [activeCompareIndex, setActiveCompareIndex] = useState(-1);
+  const compareGridRef = useRef(null);
+
+  // Track orbit angle to sync gradient border glow with logo position
+  useEffect(() => {
+    const ORBIT_DURATION = 28000; // 28s matches CSS animation
+    // Node angles: 0=0°, 1=60°, 2=120°, 3=180°, 4=240°, 5=300°
+    const NODE_ANGLES = [0, 60, 120, 180, 240, 300];
+    const TOLERANCE = 22; // degrees window where node is "active"
+    let rafId;
+    const tick = () => {
+      const elapsed = (Date.now() - orbitStartRef.current) % ORBIT_DURATION;
+      const currentAngle = (elapsed / ORBIT_DURATION) * 360;
+      let active = -1;
+      for (let i = 0; i < NODE_ANGLES.length; i++) {
+        let diff = Math.abs(currentAngle - NODE_ANGLES[i]);
+        if (diff > 180) diff = 360 - diff;
+        if (diff <= TOLERANCE) { active = i; break; }
+      }
+      setActiveFeatureNode(prev => prev !== active ? active : prev);
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
+  // Comparison section indicator animation (slowly bottom-to-top and top-to-bottom)
+  useEffect(() => {
+    const CYCLE_DURATION = 14000; // 14 seconds total cycle
+    let rafId;
+    const tick = () => {
+      const elapsed = Date.now() % CYCLE_DURATION;
+      const progress = elapsed / CYCLE_DURATION;
+      // Triangle wave to go 0 -> 1 -> 0
+      const position = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+      
+      if (compareGridRef.current) {
+        compareGridRef.current.style.setProperty('--compare-logo-pos', `${position}`);
+      }
+
+      // Map position [0, 1] to index [0, 4]
+      // 5 sections: 0 to 0.2, 0.2 to 0.4, 0.4 to 0.6, 0.6 to 0.8, 0.8 to 1.0
+      const index = Math.floor(position * 5);
+      setActiveCompareIndex(index >= 5 ? 4 : index);
+      
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
+  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -43,6 +239,15 @@ const LandingPage = () => {
 
   return (
     <div className="lp-root">
+      {/* Scroll Progress Bar */}
+      <div className="lp-scroll-progress-container">
+        <div className="lp-scroll-progress-fill" ref={scrollFillRef} style={{ height: '0%' }}>
+          <div className="lp-scroll-progress-logo">
+            <img src={chatbotLogo} alt="Codeshor AI" />
+          </div>
+        </div>
+      </div>
+
       {/* Grid Pattern Backdrop */}
       <div className="lp-grid-pattern"></div>
 
@@ -53,734 +258,76 @@ const LandingPage = () => {
       {/* Luxury Top House Banner */}
       <div className="lp-top-banner">
         <div className="lp-house-badge-container">
-          <div className="lp-house-badge">
-            <span className="lp-house-icon">🏛️</span>
-            <span className="lp-house-prefix">From the House of</span>
-            <span className="lp-house-brand">C O D E S H O R</span>
-            <span className="lp-house-sparkle">✨</span>
+          <span className="lp-house-prefix">From the house of</span>
+          <div className="lp-magnify-brand">
+            <span style={{ fontSize: '16px', fontWeight: 400, color: '#a1a1aa' }}>C</span>
+            <span style={{ fontSize: '17px', fontWeight: 500, color: '#d4d4d8' }}>O</span>
+            <span style={{ fontSize: '18px', fontWeight: 600, color: '#e4e4e7' }}>D</span>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#fafafa' }}>E</span>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#fafafa' }}>S</span>
+            <span style={{ fontSize: '18px', fontWeight: 600, color: '#e4e4e7' }}>H</span>
+            <span style={{ fontSize: '17px', fontWeight: 500, color: '#d4d4d8' }}>O</span>
+            <span style={{ fontSize: '16px', fontWeight: 400, color: '#a1a1aa' }}>R</span>
           </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="lp-nav lp-container">
-        <div className="lp-nav-logo">
-          <span className="lp-logo-text">Codeshor</span>
-          <span className="lp-logo-badge">AI</span>
-        </div>
+      <Nav
+        scrolled={scrolled}
+        isNavHidden={isNavHidden}
+        chatbotLogo={chatbotLogo}
+        mobileMenuOpen={mobileMenuOpen}
+        setMobileMenuOpen={setMobileMenuOpen}
+        activeSection={activeSection}
+        toggleTheme={toggleTheme}
+        theme={theme}
+      />
 
-        <div className={`lp-nav-links ${mobileMenuOpen ? 'active' : ''}`}>
-          <a href="#how-easy" onClick={() => setMobileMenuOpen(false)}>How Easy It Is</a>
-          <a href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a>
-          <a href="#demo" onClick={() => setMobileMenuOpen(false)}>Live Demo</a>
-          <a href="#calculator" onClick={() => setMobileMenuOpen(false)}>ROI Calculator</a>
-          <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
-          <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-        </div>
+      <Hero characterImg={characterImg} />
 
-        <div className="lp-nav-actions">
-          <Link to="/login" className="lp-btn lp-btn-secondary lp-hide-mobile">
-            Sign In
-          </Link>
-          <Link to="/login" className="lp-btn lp-btn-primary">
-            Start Free Trial
-          </Link>
+      <Onboarding
+        onboardingRef={onboardingRef}
+        onboardingProgress={onboardingProgress}
+        onboardingStep={onboardingStep}
+        setOnboardingStep={setOnboardingStep}
+        chatbotLogo={chatbotLogo}
+      />
 
-          <button 
-            className="lp-mobile-menu-toggle" 
-            aria-label="Toggle Navigation"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-        </div>
-      </nav>
+      <Features activeFeatureNode={activeFeatureNode} chatbotLogo={chatbotLogo} />
 
-      {/* Hero Section */}
-      <header className="lp-hero lp-container">
-        <div className="lp-hero-pill">
-          <span className="lp-pill-sparkle">🚀</span>
-          <span>Next-Gen Autonomous AI &amp; Voice Platform for B2B</span>
-        </div>
+      <Calculator
+        monthlyQueries={monthlyQueries}
+        setMonthlyQueries={setMonthlyQueries}
+        hoursSavedPerMonth={hoursSavedPerMonth}
+        estimatedMoneySaved={estimatedMoneySaved}
+      />
 
-        <h1 className="lp-hero-title">
-          Turn Website Visitors Into <br className="lp-br-desktop" />
-          <span className="lp-text-gradient">Paying Customers 24/7</span>
-        </h1>
+      <Compare
+        activeCompareIndex={activeCompareIndex}
+        compareGridRef={compareGridRef}
+        chatbotLogo={chatbotLogo}
+      />
 
-        <p className="lp-hero-subtitle">
-          Deploy an intelligent, voice-enabled AI assistant in under 2 minutes. 
-          Zero hallucinations, instant lead capture, and automated customer support that gets smarter every day.
-        </p>
+      <Pricing
+        billingCycle={billingCycle}
+        setBillingCycle={setBillingCycle}
+        chatbotLogo={chatbotLogo}
+      />
 
-        <div className="lp-hero-cta-group">
-          <Link to="/login" className="lp-btn lp-btn-primary lp-btn-lg">
-            Start 14-Day Free Trial
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </Link>
-          <a href="#how-easy" className="lp-btn lp-btn-secondary lp-btn-lg">
-            See 2-Minute Onboarding
-          </a>
-        </div>
+      <FAQ
+        faqs={faqs}
+        openFaq={openFaq}
+        toggleFaq={toggleFaq}
+        faqLogoPos={faqLogoPos}
+        faqHeaderRef={faqHeaderRef}
+        faqTitleWordRef={faqTitleWordRef}
+        faqAccordionRef={faqAccordionRef}
+        chatbotLogo={chatbotLogo}
+      />
 
-        {/* Interactive Feature Switcher / Live Preview */}
-        <div id="demo" className="lp-interactive-demo-container">
-          <div className="lp-demo-tabs">
-            <button 
-              className={`lp-demo-tab ${heroTab === 'chat' ? 'active' : ''}`}
-              onClick={() => setHeroTab('chat')}
-            >
-              💬 Smart RAG Chat
-            </button>
-            <button 
-              className={`lp-demo-tab ${heroTab === 'voice' ? 'active' : ''}`}
-              onClick={() => setHeroTab('voice')}
-            >
-              🎙️ Voice Notes AI
-            </button>
-            <button 
-              className={`lp-demo-tab ${heroTab === 'leads' ? 'active' : ''}`}
-              onClick={() => setHeroTab('leads')}
-            >
-              🧲 Lead Capture
-            </button>
-            <button 
-              className={`lp-demo-tab ${heroTab === 'knowledge' ? 'active' : ''}`}
-              onClick={() => setHeroTab('knowledge')}
-            >
-              🧠 Knowledge Gaps
-            </button>
-          </div>
+      <CTA />
 
-          <div className="lp-mockup-card">
-            <div className="lp-mockup-header">
-              <div className="lp-mockup-dots">
-                <span className="dot red"></span>
-                <span className="dot yellow"></span>
-                <span className="dot green"></span>
-              </div>
-              <div className="lp-mockup-title">
-                {heroTab === 'chat' && 'codeshor-ai • RAG Context Engine'}
-                {heroTab === 'voice' && 'codeshor-ai • Real-time Voice Transcription'}
-                {heroTab === 'leads' && 'codeshor-ai • Automated Lead Qualification'}
-                {heroTab === 'knowledge' && 'codeshor-ai • One-Click Knowledge Gap Trainer'}
-              </div>
-              <div className="lp-mockup-badge">LIVE DEMO</div>
-            </div>
-
-            <div className="lp-mockup-body">
-              {heroTab === 'chat' && (
-                <>
-                  <div className="lp-chat-msg bot">
-                    <div className="lp-avatar">🤖</div>
-                    <div className="lp-msg-bubble">
-                      Welcome to Codeshor AI! Ask me anything about our services or pricing.
-                    </div>
-                  </div>
-                  <div className="lp-chat-msg user">
-                    <div className="lp-msg-bubble">
-                      What are your permanent hiring pricing rates?
-                    </div>
-                  </div>
-                  <div className="lp-chat-msg bot">
-                    <div className="lp-avatar">🤖</div>
-                    <div className="lp-msg-bubble">
-                      For permanent hiring, our fee is <strong>8% to 12% of the candidate's annual CTC</strong>. We close 90% of roles within 2 to 4 weeks!
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {heroTab === 'voice' && (
-                <>
-                  <div className="lp-chat-msg user voice">
-                    <div className="lp-msg-bubble">
-                      <span className="lp-voice-wave">🎙️ Voice Note (0:12) • "Hi, do you offer bulk hiring for startups?"</span>
-                    </div>
-                  </div>
-                  <div className="lp-chat-msg bot">
-                    <div className="lp-avatar">🤖</div>
-                    <div className="lp-msg-bubble">
-                      Yes! We offer bulk hiring packages with custom volume discounts tailored for fast-growing startups. Would you like a price quote?
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {heroTab === 'leads' && (
-                <div className="lp-lead-preview-form">
-                  <div className="lp-lead-title">👋 Welcome! Enter your details to start chatting</div>
-                  <div className="lp-lead-inputs">
-                    <input type="text" placeholder="Your Name" readOnly value="Alex Johnson" className="lp-preview-input" />
-                    <input type="email" placeholder="Email Address" readOnly value="alex@company.com" className="lp-preview-input" />
-                    <button className="lp-btn lp-btn-primary lp-btn-full">Start Instant Chat</button>
-                  </div>
-                  <div className="lp-lead-footer">🔒 Lead automatically synced to Admin CRM</div>
-                </div>
-              )}
-
-              {heroTab === 'knowledge' && (
-                <div className="lp-knowledge-preview">
-                  <div className="lp-gap-header">
-                    <span className="lp-gap-badge">NEW KNOWLEDGE GAP DETECTED</span>
-                    <span className="lp-gap-time">Just now</span>
-                  </div>
-                  <div className="lp-gap-question">User asked: "Do you provide onsite developers in Bengaluru?"</div>
-                  <div className="lp-gap-answer-box">
-                    <label>Add Verified Answer:</label>
-                    <input type="text" readOnly value="Yes, we provide onsite developers across Bengaluru, Mumbai, and Delhi NCR." className="lp-preview-input" />
-                  </div>
-                  <button className="lp-btn lp-btn-primary" style={{ alignSelf: 'flex-end' }}>
-                    ✨ Train AI (1-Click)
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Tech Stack Logo Cloud */}
-        <div className="lp-logo-cloud">
-          <div className="lp-logo-cloud-title">POWERED BY ENTERPRISE INFRASTRUCTURE</div>
-          <div className="lp-logos-wrapper">
-            <span className="lp-tech-badge">OpenAI GPT-4o</span>
-            <span className="lp-tech-badge">Pinecone Vector DB</span>
-            <span className="lp-tech-badge">Vercel Edge</span>
-            <span className="lp-tech-badge">Upstash Redis</span>
-            <span className="lp-tech-badge">MongoDB Atlas</span>
-            <span className="lp-tech-badge">Render Cloud</span>
-          </div>
-        </div>
-
-        {/* Stats Bar */}
-        <div className="lp-stats-grid">
-          <div className="lp-stat-card">
-            <div className="lp-stat-value">99.9%</div>
-            <div className="lp-stat-label">Uptime SLA</div>
-          </div>
-          <div className="lp-stat-card">
-            <div className="lp-stat-value">10x</div>
-            <div className="lp-stat-label">Lead Conversion</div>
-          </div>
-          <div className="lp-stat-card">
-            <div className="lp-stat-value">&lt; 50ms</div>
-            <div className="lp-stat-label">Fast-Rule Match</div>
-          </div>
-          <div className="lp-stat-card">
-            <div className="lp-stat-value">93%</div>
-            <div className="lp-stat-label">Automation Rate</div>
-          </div>
-        </div>
-      </header>
-
-      {/* IMPRESSIVE COMPONENT: "How Easy It Is" 3-Step Onboarding Walkthrough */}
-      <section id="how-easy" className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">ZERO TECH FRICTION</div>
-          <h2 className="lp-section-title">How Easy It Is For Your Business To Go Live</h2>
-          <p className="lp-section-desc">From signup to your first AI automated conversation in 3 simple steps.</p>
-        </div>
-
-        <div className="lp-onboarding-container">
-          {/* Step Selector Controls */}
-          <div className="lp-stepper-controls">
-            <button 
-              className={`lp-stepper-btn ${onboardingStep === 1 ? 'active' : ''}`}
-              onClick={() => setOnboardingStep(1)}
-            >
-              <div className="lp-step-num">01</div>
-              <div className="lp-step-meta">
-                <span className="lp-step-name">Register Domain</span>
-                <span className="lp-step-time">30 Seconds</span>
-              </div>
-            </button>
-
-            <button 
-              className={`lp-stepper-btn ${onboardingStep === 2 ? 'active' : ''}`}
-              onClick={() => setOnboardingStep(2)}
-            >
-              <div className="lp-step-num">02</div>
-              <div className="lp-step-meta">
-                <span className="lp-step-name">Feed Business Knowledge</span>
-                <span className="lp-step-time">60 Seconds</span>
-              </div>
-            </button>
-
-            <button 
-              className={`lp-stepper-btn ${onboardingStep === 3 ? 'active' : ''}`}
-              onClick={() => setOnboardingStep(3)}
-            >
-              <div className="lp-step-num">03</div>
-              <div className="lp-step-meta">
-                <span className="lp-step-name">One-Click Activation</span>
-                <span className="lp-step-time">Instant Go-Live</span>
-              </div>
-            </button>
-          </div>
-
-          {/* Interactive Visual Display Window */}
-          <div className="lp-onboarding-display-card">
-            {onboardingStep === 1 && (
-              <div className="lp-step-content-box animate-fade-in">
-                <div className="lp-step-header-info">
-                  <span className="lp-step-badge">STEP 1 OF 3</span>
-                  <h3 className="lp-step-heading">Create Account &amp; Register Website Domain</h3>
-                  <p className="lp-step-subheading">Enter your company name and domain URL. Our system automatically issues SSL certificates and sets up secure domain whitelisting.</p>
-                </div>
-
-                <div className="lp-step-mockup-form">
-                  <div className="lp-form-row">
-                    <label>Company Name</label>
-                    <input type="text" readOnly value="Acme Technologies Inc." className="lp-preview-input" />
-                  </div>
-                  <div className="lp-form-row">
-                    <label>Website Domain</label>
-                    <div className="lp-input-with-badge">
-                      <input type="text" readOnly value="acmetech.com" className="lp-preview-input" />
-                      <span className="lp-verified-badge">✓ Whitelisted</span>
-                    </div>
-                  </div>
-                  <div className="lp-form-action">
-                    <button className="lp-btn lp-btn-primary" onClick={() => setOnboardingStep(2)}>
-                      Next: Feed Knowledge Base $\rightarrow$
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {onboardingStep === 2 && (
-              <div className="lp-step-content-box animate-fade-in">
-                <div className="lp-step-header-info">
-                  <span className="lp-step-badge">STEP 2 OF 3</span>
-                  <h3 className="lp-step-heading">Feed Business Services, Pricing &amp; FAQs</h3>
-                  <p className="lp-step-subheading">No complex data modeling needed. Simply type or paste your services, pricing rates, working hours, and FAQs. Our RAG engine indexes it instantly into Pinecone vectors.</p>
-                </div>
-
-                <div className="lp-knowledge-feed-mockup">
-                  <div className="lp-kb-item">
-                    <span className="lp-kb-icon">📋</span>
-                    <div>
-                      <div className="lp-kb-title">Services &amp; Offerings</div>
-                      <div className="lp-kb-desc">IT Staffing, Software Development, UI/UX Design</div>
-                    </div>
-                    <span className="lp-kb-status">Indexed</span>
-                  </div>
-
-                  <div className="lp-kb-item">
-                    <span className="lp-kb-icon">💰</span>
-                    <div>
-                      <div className="lp-kb-title">Pricing Structure</div>
-                      <div className="lp-kb-desc">8-12% annual CTC for permanent staffing; custom contract rates</div>
-                    </div>
-                    <span className="lp-kb-status">Indexed</span>
-                  </div>
-
-                  <div className="lp-kb-item">
-                    <span className="lp-kb-icon">⏰</span>
-                    <div>
-                      <div className="lp-kb-title">Business Hours &amp; Location</div>
-                      <div className="lp-kb-desc">Mon-Fri 9:30 AM - 6:30 PM IST • Bengaluru, India</div>
-                    </div>
-                    <span className="lp-kb-status">Indexed</span>
-                  </div>
-
-                  <div className="lp-form-action">
-                    <button className="lp-btn lp-btn-primary" onClick={() => setOnboardingStep(3)}>
-                      Next: Activate AI Assistant $\rightarrow$
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {onboardingStep === 3 && (
-              <div className="lp-step-content-box animate-fade-in">
-                <div className="lp-step-header-info">
-                  <span className="lp-step-badge">STEP 3 OF 3</span>
-                  <h3 className="lp-step-heading">One-Click Activation &amp; Instant Go-Live</h3>
-                  <p className="lp-step-subheading">Select your website platform (Shopify, WordPress, Webflow, React, or Custom Web). Click Activate and your AI chatbot immediately begins capturing leads and handling support 24/7!</p>
-                </div>
-
-                <div className="lp-activation-mockup">
-                  <div className="lp-platform-cards-grid">
-                    <div className="lp-platform-card active">
-                      <span className="lp-platform-icon">🌐</span>
-                      <div className="lp-platform-name">WordPress / Webflow</div>
-                      <span className="lp-platform-status">1-Click Connected</span>
-                    </div>
-
-                    <div className="lp-platform-card active">
-                      <span className="lp-platform-icon">🛍️</span>
-                      <div className="lp-platform-name">Shopify Store</div>
-                      <span className="lp-platform-status">App Connected</span>
-                    </div>
-
-                    <div className="lp-platform-card active">
-                      <span className="lp-platform-icon">⚡</span>
-                      <div className="lp-platform-name">Custom React / Web</div>
-                      <span className="lp-platform-status">Auto-Detected</span>
-                    </div>
-                  </div>
-
-                  <div className="lp-live-status-banner">
-                    <div className="lp-status-pulse"></div>
-                    <span>🎉 <strong>AI Assistant Active &amp; Responding 24/7!</strong> Live on acmetech.com • Lead Capture On</span>
-                  </div>
-
-                  <div className="lp-form-action">
-                    <Link to="/login" className="lp-btn lp-btn-primary lp-btn-lg">
-                      Launch Your AI Assistant Now $\rightarrow$
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid Section */}
-      <section id="features" className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">ENGINEERED FOR GROWTH</div>
-          <h2 className="lp-section-title">Everything You Need to Scale Support &amp; Sales</h2>
-          <p className="lp-section-desc">
-            A comprehensive suite of AI tools designed to capture leads, answer questions, and eliminate repetitive support tickets.
-          </p>
-        </div>
-
-        <div className="lp-features-grid">
-          <div className="lp-feature-card">
-            <div className="lp-feature-icon-wrapper">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" /><path d="M12 6v6l4 2" /></svg>
-            </div>
-            <h3 className="lp-feature-title">Smart RAG AI Engine</h3>
-            <p className="lp-feature-desc">
-              Powered by GPT-4o-mini and Pinecone Vector Search. Answers strictly using your verified business context with zero hallucinations.
-            </p>
-          </div>
-
-          <div className="lp-feature-card">
-            <div className="lp-feature-icon-wrapper highlight">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
-            </div>
-            <h3 className="lp-feature-title">Knowledge Gaps Learning</h3>
-            <p className="lp-feature-desc">
-              Unanswered questions are automatically logged into your dashboard. Review the gap, add the answer, and click 'Train AI' to get smarter every day.
-            </p>
-          </div>
-
-          <div className="lp-feature-card">
-            <div className="lp-feature-icon-wrapper">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="22" /></svg>
-            </div>
-            <h3 className="lp-feature-title">Native Voice Notes AI</h3>
-            <p className="lp-feature-desc">
-              Allows customers to record audio messages directly in the widget. Transcribes speech to text in real-time for effortless communication.
-            </p>
-          </div>
-
-          <div className="lp-feature-card">
-            <div className="lp-feature-icon-wrapper">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
-            </div>
-            <h3 className="lp-feature-title">Automated Lead Capture</h3>
-            <p className="lp-feature-desc">
-              Collect visitor names, emails, and WhatsApp numbers before starting conversations, feeding qualified leads straight to your CRM dashboard.
-            </p>
-          </div>
-
-          <div className="lp-feature-card">
-            <div className="lp-feature-icon-wrapper">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
-            </div>
-            <h3 className="lp-feature-title">100% Brand Customization</h3>
-            <p className="lp-feature-desc">
-              Match your site aesthetic with custom brand colors, logos, launcher icons, background patterns, and personalized welcome messages.
-            </p>
-          </div>
-
-          <div className="lp-feature-card">
-            <div className="lp-feature-icon-wrapper">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
-            </div>
-            <h3 className="lp-feature-title">Instant Fast-Rules Engine</h3>
-            <p className="lp-feature-desc">
-              Answers common intents like address, contact details, and business hours in under 50ms without waiting for LLM completion.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive ROI Calculator Component */}
-      <section id="calculator" className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">ESTIMATE SAVINGS</div>
-          <h2 className="lp-section-title">See How Much Time &amp; Money You Save</h2>
-          <p className="lp-section-desc">Adjust your monthly query volume to estimate your team's savings.</p>
-        </div>
-
-        <div className="lp-calculator-box">
-          <div className="lp-calc-inputs">
-            <div className="lp-slider-header">
-              <label>Monthly Visitor Queries / Chats:</label>
-              <span className="lp-slider-value">{monthlyQueries.toLocaleString()} / mo</span>
-            </div>
-            <input 
-              type="range" 
-              min="500" 
-              max="15000" 
-              step="500"
-              value={monthlyQueries}
-              onChange={(e) => setMonthlyQueries(Number(e.target.value))}
-              className="lp-range-slider"
-            />
-          </div>
-
-          <div className="lp-calc-results">
-            <div className="lp-calc-card">
-              <div className="lp-calc-number">{hoursSavedPerMonth} hrs</div>
-              <div className="lp-calc-label">Support Hours Saved / mo</div>
-            </div>
-            <div className="lp-calc-card highlight">
-              <div className="lp-calc-number">₹{estimatedMoneySaved.toLocaleString()}</div>
-              <div className="lp-calc-label">Estimated Monthly Savings</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Comparison Matrix Component */}
-      <section className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">WHY CHOOSE US</div>
-          <h2 className="lp-section-title">Codeshor AI vs Legacy Chatbots</h2>
-          <p className="lp-section-desc">See why modern B2B companies are switching to our autonomous AI engine.</p>
-        </div>
-
-        <div className="lp-comparison-table-wrapper">
-          <table className="lp-comparison-table">
-            <thead>
-              <tr>
-                <th>Feature</th>
-                <th>Legacy Chatbots</th>
-                <th className="lp-highlight-col">Codeshor AI</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Hallucination Protection</td>
-                <td>❌ Frequent wrong answers</td>
-                <td className="lp-highlight-col">✓ 100% Context Strict (RAG)</td>
-              </tr>
-              <tr>
-                <td>Voice Note Support</td>
-                <td>❌ Text Only</td>
-                <td className="lp-highlight-col">✓ Speech-to-Text &amp; Audio AI</td>
-              </tr>
-              <tr>
-                <td>Auto-Learning Loop</td>
-                <td>❌ Manual FAQ setup</td>
-                <td className="lp-highlight-col">✓ Knowledge Gap Auto-Tracker</td>
-              </tr>
-              <tr>
-                <td>Response Latency</td>
-                <td>⚠️ 3-5 seconds</td>
-                <td className="lp-highlight-col">⚡ &lt; 50ms Fast-Rules</td>
-              </tr>
-              <tr>
-                <td>Lead Generation</td>
-                <td>❌ Complex integrations required</td>
-                <td className="lp-highlight-col">✓ Native Pre-Chat Qualification</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">TRANSPARENT PRICING</div>
-          <h2 className="lp-section-title">Plans Built for Every Stage of Growth</h2>
-          <p className="lp-section-desc">Straightforward pricing in INR with zero hidden fees. Scale as your traffic expands.</p>
-          
-          {/* Billing Cycle Toggle */}
-          <div className="lp-billing-toggle">
-            <button 
-              className={`lp-billing-btn ${billingCycle === 'monthly' ? 'active' : ''}`}
-              onClick={() => setBillingCycle('monthly')}
-            >
-              Monthly Billing
-            </button>
-            <button 
-              className={`lp-billing-btn ${billingCycle === 'annual' ? 'active' : ''}`}
-              onClick={() => setBillingCycle('annual')}
-            >
-              Yearly Billing <span className="lp-discount-badge">Save 20%</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="lp-pricing-grid">
-          {/* Starter Plan */}
-          <div className="lp-pricing-card">
-            <div className="lp-pricing-header">
-              <h3 className="lp-pricing-name">Starter Plan</h3>
-              <p className="lp-pricing-target">Ideal for local businesses &amp; startups</p>
-              <div className="lp-pricing-amount">
-                <span className="lp-currency">₹</span>
-                {billingCycle === 'monthly' ? '1,499' : '1,199'}
-                <span className="lp-period">/month</span>
-              </div>
-            </div>
-
-            <ul className="lp-pricing-features">
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>1,000 AI Text Responses</strong> / mo</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>100 Voice Interactions</strong></li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Basic Widget Customization</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Standard Knowledge Base</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Email Support</li>
-            </ul>
-
-            <Link to="/login" className="lp-btn lp-btn-secondary lp-btn-full">
-              Get Started with Starter
-            </Link>
-          </div>
-
-          {/* Growth Plan */}
-          <div className="lp-pricing-card popular">
-            <div className="lp-popular-badge">🔥 MOST POPULAR • 93% ROI</div>
-
-            <div className="lp-pricing-header">
-              <h3 className="lp-pricing-name">Growth Plan</h3>
-              <p className="lp-pricing-target">Perfect for E-commerce &amp; Clinics</p>
-              <div className="lp-pricing-amount">
-                <span className="lp-currency">₹</span>
-                {billingCycle === 'monthly' ? '3,499' : '2,799'}
-                <span className="lp-period">/month</span>
-              </div>
-            </div>
-
-            <ul className="lp-pricing-features">
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>3,000 AI Text Responses</strong> / mo</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>400 Voice Interactions</strong></li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Advanced Analytics &amp; Lead Sync</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>Remove Watermark</strong></li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Knowledge Gap Auto-Tracker</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Priority Chat &amp; Email Support</li>
-            </ul>
-
-            <Link to="/login" className="lp-btn lp-btn-primary lp-btn-full">
-              Upgrade to Growth Plan
-            </Link>
-          </div>
-
-          {/* Enterprise Plan */}
-          <div className="lp-pricing-card">
-            <div className="lp-pricing-header">
-              <h3 className="lp-pricing-name">Enterprise Plan</h3>
-              <p className="lp-pricing-target">For high-traffic agencies &amp; platforms</p>
-              <div className="lp-pricing-amount">
-                <span className="lp-currency">₹</span>
-                {billingCycle === 'monthly' ? '7,999' : '6,399'}
-                <span className="lp-period">/month</span>
-              </div>
-            </div>
-
-            <ul className="lp-pricing-features">
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>10,000 AI Text Responses</strong> / mo</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> <strong>1,500 Voice Interactions</strong></li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Custom API Integrations</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> Dedicated Account Manager</li>
-              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg> 99.9% SLA &amp; Priority Support</li>
-            </ul>
-
-            <Link to="/login" className="lp-btn lp-btn-secondary lp-btn-full">
-              Contact Sales
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section id="faq" className="lp-section lp-container">
-        <div className="lp-section-header">
-          <div className="lp-section-tag">GOT QUESTIONS?</div>
-          <h2 className="lp-section-title">Frequently Asked Questions</h2>
-          <p className="lp-section-desc">Everything you need to know about setting up and scaling your AI chatbot.</p>
-        </div>
-
-        <div className="lp-faq-accordion">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className={`lp-faq-item ${openFaq === index ? 'open' : ''}`}
-              onClick={() => toggleFaq(index)}
-            >
-              <div className="lp-faq-question">
-                <span>{faq.q}</span>
-                <span className="lp-faq-icon">{openFaq === index ? '−' : '+'}</span>
-              </div>
-              {openFaq === index && (
-                <div className="lp-faq-answer">
-                  <p>{faq.a}</p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="lp-cta-section lp-container">
-        <div className="lp-cta-box">
-          <h2 className="lp-cta-title">Ready to Automate Support &amp; Skyrocket Leads?</h2>
-          <p className="lp-cta-desc">Join forward-thinking companies powered by Codeshor AI today.</p>
-          <div className="lp-cta-actions">
-            <Link to="/login" className="lp-btn lp-btn-primary lp-btn-lg">
-              Start Free Trial Now
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="lp-footer lp-container">
-        <div className="lp-footer-content">
-          <div className="lp-footer-brand">
-            <div className="lp-nav-logo">
-              <span className="lp-logo-text">Codeshor</span>
-              <span className="lp-logo-badge">AI</span>
-            </div>
-            <p className="lp-footer-tagline">Crafting Next-Gen Autonomous AI Experiences.</p>
-            <div className="lp-footer-house">
-              From the House of <span className="lp-house-highlight">C O D E S H O R</span>
-            </div>
-          </div>
-
-          <div className="lp-footer-links">
-            <a href="#how-easy">How Easy It Is</a>
-            <a href="#features">Features</a>
-            <a href="#demo">Live Demo</a>
-            <a href="#calculator">Calculator</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#faq">FAQ</a>
-            <Link to="/login">Sign In</Link>
-          </div>
-        </div>
-
-        <div className="lp-footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Codeshor AI. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer chatbotLogo={chatbotLogo} />
     </div>
   );
 };
