@@ -8,6 +8,7 @@ const ClientKnowledgeGaps = () => {
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState({});
   const [submitting, setSubmitting] = useState({});
+  const [deleting, setDeleting] = useState({});
 
   useEffect(() => {
     fetchGaps();
@@ -68,6 +69,34 @@ const ClientKnowledgeGaps = () => {
     setSubmitting((prev) => ({ ...prev, [id]: false }));
   };
 
+  const handleDeleteGap = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this question?")) return;
+
+    setDeleting((prev) => ({ ...prev, [id]: true }));
+
+    try {
+      const res = await fetch(`${API_BASE}/client/knowledge-gaps/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        setGaps((prev) => prev.filter((gap) => gap._id !== id));
+      } else {
+        alert(result.message || "Failed to delete question");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting question");
+    }
+
+    setDeleting((prev) => ({ ...prev, [id]: false }));
+  };
+
   if (loading) return <div style={{ color: "white", padding: "2rem" }}>Loading knowledge gaps...</div>;
 
   return (
@@ -77,7 +106,7 @@ const ClientKnowledgeGaps = () => {
       </div>
       
       <p style={{ color: "#94a3b8", marginBottom: "2rem", fontSize: "1.05rem" }}>
-        These are questions your AI couldn't answer. Provide an answer below to train the AI instantly!
+        These are questions your AI couldn't answer. Provide an answer below to train the AI instantly, or delete non-relevant questions.
       </p>
 
       {gaps.length === 0 ? (
@@ -109,14 +138,32 @@ const ClientKnowledgeGaps = () => {
                 />
               </div>
               
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+                <button
+                  type="button"
+                  className="btn-danger"
+                  onClick={() => handleDeleteGap(gap._id)}
+                  disabled={deleting[gap._id] || submitting[gap._id]}
+                  style={{
+                    padding: "0.5rem 1rem",
+                    fontSize: "0.875rem",
+                    backgroundColor: "#ef4444",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.375rem",
+                    cursor: (deleting[gap._id] || submitting[gap._id]) ? "not-allowed" : "pointer",
+                    opacity: (deleting[gap._id] || submitting[gap._id]) ? 0.6 : 1,
+                  }}
+                >
+                  {deleting[gap._id] ? "Deleting..." : "Delete Question"}
+                </button>
                 <button
                   className="btn-primary"
                   onClick={() => submitAnswer(gap._id)}
-                  disabled={submitting[gap._id] || !answers[gap._id]?.trim()}
+                  disabled={submitting[gap._id] || deleting[gap._id] || !answers[gap._id]?.trim()}
                   style={{
-                    opacity: (submitting[gap._id] || !answers[gap._id]?.trim()) ? 0.6 : 1,
-                    cursor: (submitting[gap._id] || !answers[gap._id]?.trim()) ? "not-allowed" : "pointer"
+                    opacity: (submitting[gap._id] || deleting[gap._id] || !answers[gap._id]?.trim()) ? 0.6 : 1,
+                    cursor: (submitting[gap._id] || deleting[gap._id] || !answers[gap._id]?.trim()) ? "not-allowed" : "pointer"
                   }}
                 >
                   {submitting[gap._id] ? "Training..." : "Submit Answer"}
