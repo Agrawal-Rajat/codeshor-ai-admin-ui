@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Hero = ({ characterImg }) => {
+const Hero = ({ characterImg, onOpenModal }) => {
   return (
     <header 
       id="home"
@@ -26,8 +26,8 @@ const Hero = ({ characterImg }) => {
             Never leave a customer on read again. Your AI chatbot handles every enquiry instantly, 24/7.
           </p>
           <div className="hero-mobile-actions">
-            <Link to="/login" className="lp-btn lp-btn-primary">Get Started</Link>
-            <Link to="/features" className="lp-btn lp-btn-secondary">View Demo</Link>
+            <button onClick={onOpenModal} className="lp-btn lp-btn-primary" style={{border: 'none', cursor: 'pointer'}}>Get Started</button>
+            <button onClick={onOpenModal} className="lp-btn lp-btn-secondary" style={{border: 'none', cursor: 'pointer'}}>Get Started</button>
           </div>
         </div>
 
@@ -46,7 +46,7 @@ const Hero = ({ characterImg }) => {
             <p className="hero-side-desc">
               An AI chatbot on your website that knows everything about your business and responds to every visitor instantly, 24/7.
             </p>
-            <Link to="/login" className="lp-btn lp-btn-primary">Get Started</Link>
+            <button onClick={onOpenModal} className="lp-btn lp-btn-primary" style={{border: 'none', cursor: 'pointer'}}>Get Started</button>
           </div>
         </div>
 
@@ -73,15 +73,13 @@ const Hero = ({ characterImg }) => {
             <p className="hero-side-desc">
               Our AI handles every enquiry with voice and text, turning missed questions into truly qualified leads seamlessly.
             </p>
-            <Link to="/features" className="lp-btn lp-btn-secondary">View Demo</Link>
+            <button onClick={onOpenModal} className="lp-btn lp-btn-secondary" style={{border: 'none', cursor: 'pointer'}}>Get Started</button>
           </div>
         </div>
 
       </div>
 
-      <div className="hero-chatbot-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-      </div>
+
     </header>
   );
 };

@@ -57,7 +57,7 @@ const Footer = ({ chatbotLogo }) => {
       <div className="lp-top-banner lp-bottom-banner">
         <div className="lp-house-badge-container">
           <span className="lp-house-prefix">From the house of</span>
-          <div className="lp-magnify-brand">
+          <a href="https://codeshor.com" target="_blank" rel="noopener noreferrer" className="lp-magnify-brand" style={{textDecoration: 'none'}}>
             <span style={{ fontSize: '16px', fontWeight: 400, color: '#a1a1aa' }}>C</span>
             <span style={{ fontSize: '17px', fontWeight: 500, color: '#d4d4d8' }}>O</span>
             <span style={{ fontSize: '18px', fontWeight: 600, color: '#e4e4e7' }}>D</span>
@@ -66,7 +66,7 @@ const Footer = ({ chatbotLogo }) => {
             <span style={{ fontSize: '18px', fontWeight: 600, color: '#e4e4e7' }}>H</span>
             <span style={{ fontSize: '17px', fontWeight: 500, color: '#d4d4d8' }}>O</span>
             <span style={{ fontSize: '16px', fontWeight: 400, color: '#a1a1aa' }}>R</span>
-          </div>
+          </a>
         </div>
       </div>
     </>

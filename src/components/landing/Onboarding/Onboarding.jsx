@@ -6,7 +6,8 @@ const Onboarding = ({
   onboardingProgress,
   onboardingStep,
   setOnboardingStep,
-  chatbotLogo
+  chatbotLogo,
+  onOpenModal
 }) => {
   return (
     <section id="how-easy" ref={onboardingRef} className="lp-onboarding-section">
@@ -95,8 +96,8 @@ const Onboarding = ({
               >
                 <div className="lp-step-num">01</div>
                 <div className="lp-step-meta">
-                  <span className="lp-step-name">Register Domain</span>
-                  <span className="lp-step-time">30 Seconds</span>
+                  <span className="lp-step-name">Contact Us For Your Bot</span>
+                  <span className="lp-step-time">Quick Request</span>
                 </div>
               </button>
 
@@ -106,8 +107,8 @@ const Onboarding = ({
               >
                 <div className="lp-step-num">02</div>
                 <div className="lp-step-meta">
-                  <span className="lp-step-name">Feed Business Knowledge</span>
-                  <span className="lp-step-time">60 Seconds</span>
+                  <span className="lp-step-name">Add Link to Codebase</span>
+                  <span className="lp-step-time">Simple Integration</span>
                 </div>
               </button>
 
@@ -117,8 +118,8 @@ const Onboarding = ({
               >
                 <div className="lp-step-num">03</div>
                 <div className="lp-step-meta">
-                  <span className="lp-step-name">One-Click Activation</span>
-                  <span className="lp-step-time">Instant Go-Live</span>
+                  <span className="lp-step-name">Final Setup & Go Live</span>
+                  <span className="lp-step-time">Instant Activation</span>
                 </div>
               </button>
             </div>
@@ -130,25 +131,14 @@ const Onboarding = ({
               <div className="lp-step-content-box animate-fade-in">
                 <div className="lp-step-header-info">
                   <span className="lp-step-badge">STEP 1 OF 3</span>
-                  <h3 className="lp-step-heading">Create Account &amp; Register Website Domain</h3>
-                  <p className="lp-step-subheading">Enter your company name and domain URL. Our system automatically whitelists your domain securely.</p>
+                  <h3 className="lp-step-heading">Contact Us For Your Bot</h3>
+                  <p className="lp-step-subheading">Reach out to us and tell us about your business. We will create a custom AI bot tailored specifically for you.</p>
                 </div>
 
                 <div className="lp-step-mockup-form">
-                  <div className="lp-form-row">
-                    <label>Company Name</label>
-                    <input type="text" readOnly value="Acme Technologies Inc." className="lp-preview-input" />
-                  </div>
-                  <div className="lp-form-row">
-                    <label>Website Domain</label>
-                    <div className="lp-input-with-badge">
-                      <input type="text" readOnly value="acmetech.com" className="lp-preview-input" />
-                      <span className="lp-verified-badge">✓ Whitelisted</span>
-                    </div>
-                  </div>
-                  <div className="lp-form-action">
-                    <button className="lp-btn lp-btn-primary" onClick={() => setOnboardingStep(2)}>
-                      Next: Feed Knowledge Base
+                  <div className="lp-form-action" style={{marginTop: '2rem'}}>
+                    <button className="lp-btn lp-btn-primary" onClick={onOpenModal}>
+                      Request Your Bot Now
                     </button>
                   </div>
                 </div>
@@ -159,41 +149,23 @@ const Onboarding = ({
               <div className="lp-step-content-box animate-fade-in">
                 <div className="lp-step-header-info">
                   <span className="lp-step-badge">STEP 2 OF 3</span>
-                  <h3 className="lp-step-heading">Feed Business Services, Pricing &amp; FAQs</h3>
-                  <p className="lp-step-subheading">No complex coding. Paste services, prices, and FAQs. Our search engine indexes it instantly.</p>
+                  <h3 className="lp-step-heading">Add Link to Codebase</h3>
+                  <p className="lp-step-subheading">Once your bot is ready, we will provide you with a simple link. Just add it to your project's codebase to connect your application instantly.</p>
                 </div>
 
                 <div className="lp-knowledge-feed-mockup">
                   <div className="lp-kb-item">
-                    <span className="lp-kb-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+                    <span className="lp-kb-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></span>
                     <div>
-                      <div className="lp-kb-title">Services &amp; Offerings</div>
-                      <div className="lp-kb-desc">IT Staffing, Software Development, UI/UX Design</div>
+                      <div className="lp-kb-title">Integration Link Provided</div>
+                      <div className="lp-kb-desc">Ready to be embedded in your HTML/React App</div>
                     </div>
-                    <span className="lp-kb-status">Indexed</span>
+                    <span className="lp-kb-status">Ready</span>
                   </div>
 
-                  <div className="lp-kb-item">
-                    <span className="lp-kb-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-                    <div>
-                      <div className="lp-kb-title">Pricing Structure</div>
-                      <div className="lp-kb-desc">8-12% annual CTC; custom staffing rates</div>
-                    </div>
-                    <span className="lp-kb-status">Indexed</span>
-                  </div>
-
-                  <div className="lp-kb-item">
-                    <span className="lp-kb-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-                    <div>
-                      <div className="lp-kb-title">Business Hours &amp; Location</div>
-                      <div className="lp-kb-desc">Mon-Fri 9:30 AM - 6:30 PM IST • Bengaluru</div>
-                    </div>
-                    <span className="lp-kb-status">Indexed</span>
-                  </div>
-
-                  <div className="lp-form-action">
+                  <div className="lp-form-action" style={{marginTop: '2rem'}}>
                     <button className="lp-btn lp-btn-primary" onClick={() => setOnboardingStep(3)}>
-                      Next: Activate AI Assistant
+                      Next: Final Setup
                     </button>
                   </div>
                 </div>
@@ -204,40 +176,20 @@ const Onboarding = ({
               <div className="lp-step-content-box animate-fade-in">
                 <div className="lp-step-header-info">
                   <span className="lp-step-badge">STEP 3 OF 3</span>
-                  <h3 className="lp-step-heading">One-Click Activation &amp; Instant Go-Live</h3>
-                  <p className="lp-step-subheading">Select your platform and click Activate. Your chatbot begins handling visitor support instantly, 24/7!</p>
+                  <h3 className="lp-step-heading">Final Setup & Go Live</h3>
+                  <p className="lp-step-subheading">The final setup is done instantly and your bot will start working properly, serving your customers 24/7!</p>
                 </div>
 
                 <div className="lp-activation-mockup">
-                  <div className="lp-platform-cards-grid">
-                    <div className="lp-platform-card active">
-                      <span className="lp-platform-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
-                      <div className="lp-platform-name">WordPress / Webflow</div>
-                      <span className="lp-platform-status">1-Click Connected</span>
-                    </div>
-
-                    <div className="lp-platform-card active">
-                      <span className="lp-platform-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
-                      <div className="lp-platform-name">Shopify Store</div>
-                      <span className="lp-platform-status">App Connected</span>
-                    </div>
-
-                    <div className="lp-platform-card active">
-                      <span className="lp-platform-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-                      <div className="lp-platform-name">Custom React / Web</div>
-                      <span className="lp-platform-status">Auto-Detected</span>
-                    </div>
-                  </div>
-
-                  <div className="lp-live-status-banner">
+                  <div className="lp-live-status-banner" style={{marginTop: '2rem'}}>
                     <div className="lp-status-pulse"></div>
-                    <span><svg style={{display:'inline',verticalAlign:'middle',marginRight:'6px'}} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><strong>AI Assistant Active &amp; Responding 24/7!</strong> acmetech.com</span>
+                    <span><svg style={{display:'inline',verticalAlign:'middle',marginRight:'6px'}} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><strong>AI Assistant Active &amp; Responding 24/7!</strong></span>
                   </div>
 
-                  <div className="lp-form-action">
-                    <Link to="/login" className="lp-btn lp-btn-primary lp-btn-lg">
-                      Launch Your AI Assistant Now
-                    </Link>
+                  <div className="lp-form-action" style={{marginTop: '2rem'}}>
+                    <button className="lp-btn lp-btn-primary lp-btn-lg" onClick={onOpenModal}>
+                      Get Started with your bot
+                    </button>
                   </div>
                 </div>
               </div>

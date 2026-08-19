@@ -10,6 +10,7 @@ import '../styles/landing.css';
 import Nav from '../components/landing/Navbar/Nav';
 import Hero from '../components/landing/Hero/Hero';
 import Onboarding from '../components/landing/Onboarding/Onboarding';
+import Demo from '../components/landing/Demo/Demo';
 import Features from '../components/landing/Features/Features';
 import Calculator from '../components/landing/RoiCalculator/Calculator';
 import Compare from '../components/landing/ComparisonMatrix/Compare';
@@ -29,6 +30,7 @@ const LandingPage = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [scrolled, setScrolled] = useState(false);
   const [isNavHidden, setIsNavHidden] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const lastScrollY = useRef(0);
   const scrollFillRef = useRef(null);
   const onboardingRef = useRef(null);
@@ -214,6 +216,11 @@ const LandingPage = () => {
   const hoursSavedPerMonth = Math.round((monthlyQueries * 3) / 60);
   const estimatedMoneySaved = Math.round(hoursSavedPerMonth * 350);
 
+  const handleOpenModal = (e) => {
+    if (e) e.preventDefault();
+    setIsModalOpen(true);
+  };
+
   const faqs = [
     {
       q: "How does Codeshor AI prevent hallucinations?",
@@ -259,7 +266,7 @@ const LandingPage = () => {
       <div className="lp-top-banner">
         <div className="lp-house-badge-container">
           <span className="lp-house-prefix">From the house of</span>
-          <div className="lp-magnify-brand">
+          <a href="https://codeshor.com" target="_blank" rel="noopener noreferrer" className="lp-magnify-brand" style={{textDecoration: 'none'}}>
             <span style={{ fontSize: '16px', fontWeight: 400, color: '#a1a1aa' }}>C</span>
             <span style={{ fontSize: '17px', fontWeight: 500, color: '#d4d4d8' }}>O</span>
             <span style={{ fontSize: '18px', fontWeight: 600, color: '#e4e4e7' }}>D</span>
@@ -268,7 +275,7 @@ const LandingPage = () => {
             <span style={{ fontSize: '18px', fontWeight: 600, color: '#e4e4e7' }}>H</span>
             <span style={{ fontSize: '17px', fontWeight: 500, color: '#d4d4d8' }}>O</span>
             <span style={{ fontSize: '16px', fontWeight: 400, color: '#a1a1aa' }}>R</span>
-          </div>
+          </a>
         </div>
       </div>
 
@@ -281,9 +288,12 @@ const LandingPage = () => {
         activeSection={activeSection}
         toggleTheme={toggleTheme}
         theme={theme}
+        onOpenModal={handleOpenModal}
       />
 
-      <Hero characterImg={characterImg} />
+      <Hero characterImg={characterImg} onOpenModal={handleOpenModal} />
+
+      <Demo videoUrl="https://res.cloudinary.com/dgdqeidxb/video/upload/v1787173455/Codeshor_AI_wqooxv.mov" chatbotLogo={chatbotLogo} />
 
       <Onboarding
         onboardingRef={onboardingRef}
@@ -291,6 +301,7 @@ const LandingPage = () => {
         onboardingStep={onboardingStep}
         setOnboardingStep={setOnboardingStep}
         chatbotLogo={chatbotLogo}
+        onOpenModal={handleOpenModal}
       />
 
       <Features activeFeatureNode={activeFeatureNode} chatbotLogo={chatbotLogo} />
@@ -325,9 +336,53 @@ const LandingPage = () => {
         chatbotLogo={chatbotLogo}
       />
 
-      <CTA />
+      <CTA onOpenModal={handleOpenModal} />
 
       <Footer chatbotLogo={chatbotLogo} />
+
+      {/* Floating WhatsApp Button */}
+      <a 
+        href="https://wa.me/919106414283?text=Hi%2C%20I'm%20interested%20in%20Codeshor%20AI%20Chatbot" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="lp-floating-whatsapp"
+      >
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+      </a>
+
+      {/* Small Contact Modal */}
+      {isModalOpen && (
+        <div className="lp-modal-overlay" onClick={() => setIsModalOpen(false)}>
+          <div className="lp-modal-content" onClick={e => e.stopPropagation()}>
+            <h3 style={{marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 600}}>Get Started with Codeshor AI</h3>
+            <p style={{marginBottom: '1.5rem', color: 'var(--lp-text-dim)'}}>Fill out this short form to request your AI chatbot.</p>
+            <form action="https://formsubmit.co/rajat@codeshor.com" method="POST" className="lp-modal-form">
+              <input type="hidden" name="_subject" value="New Lead for Codeshor AI!" />
+              <input type="hidden" name="_next" value={window.location.href} />
+              <input type="hidden" name="_captcha" value="false" />
+              
+              <div className="lp-form-row">
+                <input type="text" name="name" placeholder="Your Name" required className="lp-preview-input" />
+              </div>
+              <div className="lp-form-row">
+                <input type="email" name="email" placeholder="Your Email" required className="lp-preview-input" />
+              </div>
+              <div className="lp-form-row">
+                <input type="text" name="company" placeholder="Company Name" required className="lp-preview-input" />
+              </div>
+              <button type="submit" className="lp-btn lp-btn-primary" style={{width: '100%', marginTop: '1rem', border: 'none', cursor: 'pointer'}}>
+                Submit Request
+              </button>
+            </form>
+            <button className="lp-modal-close" onClick={() => setIsModalOpen(false)} style={{
+              position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none',
+              fontSize: '24px', color: 'var(--lp-text)', cursor: 'pointer'
+            }}>×</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

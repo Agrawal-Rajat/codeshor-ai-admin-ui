@@ -9,7 +9,8 @@ const Nav = ({
   setMobileMenuOpen,
   activeSection,
   toggleTheme,
-  theme
+  theme,
+  onOpenModal
 }) => {
   return (
     <nav className={`lp-nav ${scrolled ? 'lp-nav-scrolled' : ''} ${isNavHidden ? 'lp-nav-hidden' : ''}`}>
@@ -21,13 +22,13 @@ const Nav = ({
 
       <div className={`lp-nav-links ${mobileMenuOpen ? 'active' : ''}`}>
         <a href="#home" className={activeSection === 'home' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Home</a>
+        <a href="#demo" className={activeSection === 'demo' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Live Demo</a>
         <a href="#how-easy" className={activeSection === 'how-easy' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>How Easy It Is</a>
         <a href="#features" className={activeSection === 'features' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Features</a>
-        <a href="#demo" className={activeSection === 'demo' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Live Demo</a>
         <a href="#calculator" className={activeSection === 'calculator' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>ROI Calculator</a>
         <a href="#pricing" className={activeSection === 'pricing' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Pricing</a>
         <a href="#faq" className={activeSection === 'faq' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-        <Link to="/login" className="lp-mobile-cta lp-btn lp-btn-primary" onClick={() => setMobileMenuOpen(false)}>Start Free Trial</Link>
+        <button className="lp-mobile-cta lp-btn lp-btn-primary" style={{border: 'none', cursor: 'pointer', fontFamily: 'inherit'}} onClick={(e) => { setMobileMenuOpen(false); onOpenModal(e); }}>Start Your Bot</button>
       </div>
 
       {/* Mobile Overlay */}
@@ -56,9 +57,9 @@ const Nav = ({
         <Link to="/login" className="lp-btn lp-btn-secondary lp-hide-mobile">
           Sign In
         </Link>
-        <Link to="/login" className="lp-btn lp-btn-primary lp-hide-mobile">
-          Start Free Trial
-        </Link>
+        <button onClick={onOpenModal} className="lp-btn lp-btn-primary lp-hide-mobile" style={{border: 'none', cursor: 'pointer', fontFamily: 'inherit'}}>
+          Start Your Bot
+        </button>
 
         <button 
           className={`lp-mobile-menu-toggle ${mobileMenuOpen ? 'open' : ''}`} 
