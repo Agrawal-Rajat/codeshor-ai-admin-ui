@@ -68,7 +68,7 @@ const FAQ = ({ faqs, openFaq, toggleFaq, faqLogoPos, faqHeaderRef, faqTitleWordR
                   </span>
                 </div>
                 <div className="lp-faq-answer-wrapper" style={{
-                  maxHeight: isOpen ? '200px' : '0',
+                  maxHeight: isOpen ? '1000px' : '0',
                   opacity: isOpen ? 1 : 0
                 }}>
                   <div className="lp-faq-answer">
