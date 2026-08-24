@@ -35,8 +35,11 @@ const AppLayout = ({ children }) => {
             <NavLink to="/client" end className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Dashboard
             </NavLink>
-            <NavLink to="/client/leads" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-              Leads
+            <NavLink to="/client/submissions" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+              User Submissions
+            </NavLink>
+            <NavLink to="/client/campaigns" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+              Campaigns
             </NavLink>
             <NavLink to="/client/conversations" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Conversations

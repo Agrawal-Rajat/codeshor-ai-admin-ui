@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import AppLayout from "./layout/AppLayout";
 import ClientDashboard from "./pages/client/ClientDashboard";
-import ClientLeads from "./pages/client/ClientLeads";
+import ClientSubmissions from "./pages/client/ClientSubmissions";
 import ClientConversations from "./pages/client/ClientConversations";
 import ConversationDetail from "./pages/client/ConversationDetail";
 import ClientPlan from "./pages/client/ClientPlan";
@@ -17,6 +17,7 @@ import AdminClientDetail from "./pages/admin/AdminClientDetail";
 import AdminCreateClient from "./pages/admin/AdminCreateClient";
 import AdminEditClient from "./pages/admin/AdminEditClient";
 import ClientWidgetSettings from "./pages/client/ClientWidgetSettings";
+import ClientCampaigns from "./pages/client/ClientCampaigns";
 
 function App() {
   return (
@@ -51,7 +52,8 @@ function App() {
             }
           >
             <Route index element={<ClientDashboard />} />
-            <Route path="leads" element={<ClientLeads />} />
+            <Route path="submissions" element={<ClientSubmissions />} />
+            <Route path="campaigns" element={<ClientCampaigns />} />
             <Route path="plan" element={<ClientPlan />} />
             <Route path="conversations" element={<ClientConversations />} />
             <Route path="knowledge-gaps" element={<ClientKnowledgeGaps />} />

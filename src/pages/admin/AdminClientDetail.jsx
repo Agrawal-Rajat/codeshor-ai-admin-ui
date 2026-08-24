@@ -211,21 +211,7 @@ const AdminClientDetail = () => {
       <div className="glass-card" style={{marginTop: "1.5rem"}}>
         <h3 className="glass-card-title">Widget Configuration</h3>
         {client.businessProfile?.widgetConfig ? (
-            <div className="form-group">
-              <label className="form-label">Default Questions</label>
-              <div style={{ color: "#cbd5e1", lineHeight: 1.6, background: "rgba(0,0,0,0.2)", padding: "1rem", borderRadius: "8px" }}>
-                {client.businessProfile.widgetConfig.defaultQuestions?.length > 0 ? (
-                  client.businessProfile.widgetConfig.defaultQuestions.map((q, i) => (
-                    <div key={i} style={{marginBottom: "10px"}}>
-                      <strong>Q:</strong> {q.question}<br/>
-                      <strong>A:</strong> {q.answer}
-                    </div>
-                  ))
-                ) : (
-                  <div>No default questions configured.</div>
-                )}
-              </div>
-            </div>
+            <div style={{ color: "#94a3b8" }}>Widget configuration saved.</div>
         ) : (
           <div style={{ color: "#94a3b8" }}>No widget configuration found.</div>
         )}

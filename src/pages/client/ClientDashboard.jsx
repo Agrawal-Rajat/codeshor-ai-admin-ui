@@ -47,7 +47,7 @@ const ClientDashboard = () => {
         <h3 className="glass-card-title">Performance Overview</h3>
         <div className="form-grid-2">
           <div className="stat-card">
-            <span className="stat-label">Total Leads Captured</span>
+            <span className="stat-label">Total Campaign Submissions</span>
             <span className="stat-value" style={{ color: "#818cf8" }}>{data.totalLeads}</span>
           </div>
 

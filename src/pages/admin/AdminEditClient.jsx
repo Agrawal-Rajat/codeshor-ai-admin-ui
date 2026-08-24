@@ -117,7 +117,6 @@ const AdminEditClient = () => {
           widgetBotTextColor:
             c.businessProfile?.widgetConfig?.botTextColor ||
             DEFAULT_WIDGET_THEME.widgetBotTextColor,
-          widgetDefaultQuestions: c.businessProfile?.widgetConfig?.defaultQuestions || [],
         });
       }
 
@@ -333,37 +332,6 @@ const AdminEditClient = () => {
                   <span>{form.widgetBotTextColor}</span>
                 </div>
               </div>
-            </div>
-
-            <div className="form-group" style={{ marginTop: "1.5rem" }}>
-              <label className="form-label">Default Questions (Max 3)</label>
-              <p style={{fontSize: "0.85rem", color: "#9ca3af", marginBottom: "0.5rem"}}>
-                Add clickable preset questions users can send instantly.
-              </p>
-              {form.widgetDefaultQuestions?.map((q, index) => (
-                  <div key={index} style={{display: 'flex', gap: '10px', marginBottom: '10px'}}>
-                     <input type="text" placeholder="Question" value={q.question} onChange={e => {
-                        const newQ = [...form.widgetDefaultQuestions];
-                        newQ[index].question = e.target.value;
-                        update("widgetDefaultQuestions", newQ);
-                     }} className="form-input" style={{flex: 1}} />
-                     <input type="text" placeholder="Answer" value={q.answer} onChange={e => {
-                        const newQ = [...form.widgetDefaultQuestions];
-                        newQ[index].answer = e.target.value;
-                        update("widgetDefaultQuestions", newQ);
-                     }} className="form-input" style={{flex: 1}} />
-                     <button type="button" onClick={() => {
-                        const newQ = form.widgetDefaultQuestions.filter((_, i) => i !== index);
-                        update("widgetDefaultQuestions", newQ);
-                     }} className="btn-secondary" style={{padding: "0 10px"}}>Remove</button>
-                  </div>
-              ))}
-              {(!form.widgetDefaultQuestions || form.widgetDefaultQuestions.length < 3) && (
-                  <button type="button" className="btn-secondary" onClick={() => {
-                     const current = form.widgetDefaultQuestions || [];
-                     update("widgetDefaultQuestions", [...current, {question: '', answer: ''}]);
-                  }}>+ Add Question</button>
-              )}
             </div>
 
             <div style={{ marginTop: "2rem" }}>

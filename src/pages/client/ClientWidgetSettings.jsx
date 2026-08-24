@@ -49,7 +49,6 @@ const ClientWidgetSettings = () => {
             widgetHookMessageEnabled: config.hookMessageEnabled !== undefined ? config.hookMessageEnabled : DEFAULT_WIDGET_THEME.widgetHookMessageEnabled,
             widgetHookMessage: config.hookMessage || DEFAULT_WIDGET_THEME.widgetHookMessage,
             widgetHookMessageAvatar: config.hookMessageAvatar || DEFAULT_WIDGET_THEME.widgetHookMessageAvatar,
-            widgetDefaultQuestions: config.defaultQuestions || [],
           });
         }
       } catch (err) {
@@ -82,7 +81,6 @@ const ClientWidgetSettings = () => {
         hookMessageEnabled: form.widgetHookMessageEnabled,
         hookMessage: form.widgetHookMessage,
         hookMessageAvatar: form.widgetHookMessageAvatar,
-        defaultQuestions: form.widgetDefaultQuestions,
       }
     };
 
