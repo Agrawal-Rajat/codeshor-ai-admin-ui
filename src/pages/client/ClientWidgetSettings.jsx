@@ -4,7 +4,7 @@ import API_BASE from "../../config";
 
 const DEFAULT_WIDGET_THEME = {
   widgetAssistantTitle: "Codeshor AI",
-  widgetLauncherIcon: "https://res.cloudinary.com/dgdqeidxb/image/upload/v1786316019/image_copy_r3mw8m.png",
+  widgetLauncherIcon: "https://res.cloudinary.com/dgdqeidxb/image/upload/v1786740514/chatbot_logo_zzebkr.png",
   widgetChatBackgroundImage: "",
   widgetPrimaryColor: "#4f46e5",
   widgetSecondaryColor: "#6366f1",
@@ -37,9 +37,13 @@ const ClientWidgetSettings = () => {
         
         if (data.success) {
           const config = data.data || {};
+          const isLegacyLogo = (url) => typeof url === "string" && (url.includes("image_copy_r3mw8m") || url.includes("bbb_metnxp"));
+          const rawLauncher = config.launcherIcon && !isLegacyLogo(config.launcherIcon) ? config.launcherIcon : DEFAULT_WIDGET_THEME.widgetLauncherIcon;
+          const rawHookAvatar = config.hookMessageAvatar && !isLegacyLogo(config.hookMessageAvatar) ? config.hookMessageAvatar : "";
+
           setForm({
             widgetAssistantTitle: config.assistantTitle || DEFAULT_WIDGET_THEME.widgetAssistantTitle,
-            widgetLauncherIcon: config.launcherIcon || DEFAULT_WIDGET_THEME.widgetLauncherIcon,
+            widgetLauncherIcon: rawLauncher,
             widgetChatBackgroundImage: config.chatBackgroundImage || DEFAULT_WIDGET_THEME.widgetChatBackgroundImage,
             widgetPrimaryColor: config.primaryColor || DEFAULT_WIDGET_THEME.widgetPrimaryColor,
             widgetSecondaryColor: config.secondaryColor || DEFAULT_WIDGET_THEME.widgetSecondaryColor,
@@ -48,7 +52,7 @@ const ClientWidgetSettings = () => {
             widgetBotTextColor: config.botTextColor || DEFAULT_WIDGET_THEME.widgetBotTextColor,
             widgetHookMessageEnabled: config.hookMessageEnabled !== undefined ? config.hookMessageEnabled : DEFAULT_WIDGET_THEME.widgetHookMessageEnabled,
             widgetHookMessage: config.hookMessage || DEFAULT_WIDGET_THEME.widgetHookMessage,
-            widgetHookMessageAvatar: config.hookMessageAvatar || DEFAULT_WIDGET_THEME.widgetHookMessageAvatar,
+            widgetHookMessageAvatar: rawHookAvatar,
           });
         }
       } catch (err) {
