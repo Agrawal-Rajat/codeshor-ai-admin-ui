@@ -88,14 +88,13 @@
     0 0 60px rgba(37, 99, 235, 0.15),
     inset 0 0 15px rgba(255, 255, 255, 0.05);
   padding: 12px;
-  transform-style: preserve-3d;
-  transform: rotateY(-3deg) rotateX(4deg);
+  transform: none;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
   z-index: 2;
 }
 
 .lp-demo-phone-frame:hover {
-  transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+  transform: scale(1.02);
   box-shadow: 
     0 30px 60px -10px rgba(0, 0, 0, 0.9),
     0 0 40px rgba(225, 29, 72, 0.25),
