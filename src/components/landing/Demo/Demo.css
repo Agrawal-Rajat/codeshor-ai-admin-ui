@@ -74,46 +74,158 @@
   50% { transform: translateY(-30px) scale(1.05); }
 }
 
-/* Futuristic Device Frame */
-.lp-demo-device-frame {
+/* Futuristic Phone Device Frame */
+.lp-demo-phone-frame {
   position: relative;
-  background: linear-gradient(145deg, #2a2a2a, #111);
-  padding: 16px 16px 24px;
-  border-radius: 24px 24px 0 0;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.05);
+  width: min(340px, 90vw);
+  margin: 0 auto;
+  background: linear-gradient(145deg, #091326, #240810);
+  border: 4px solid #1a1a1a;
+  border-radius: 44px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.8),
+    0 0 30px rgba(225, 29, 72, 0.15),
+    0 0 60px rgba(37, 99, 235, 0.15),
+    inset 0 0 15px rgba(255, 255, 255, 0.05);
+  padding: 12px;
   transform-style: preserve-3d;
-  transform: rotateX(2deg);
-  transition: transform 0.4s ease;
+  transform: rotateY(-3deg) rotateX(4deg);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+  z-index: 2;
 }
 
-.lp-demo-device-frame::before {
+.lp-demo-phone-frame:hover {
+  transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+  box-shadow: 
+    0 30px 60px -10px rgba(0, 0, 0, 0.9),
+    0 0 40px rgba(225, 29, 72, 0.25),
+    0 0 80px rgba(37, 99, 235, 0.25),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Glowing border overlay */
+.lp-demo-phone-frame::before {
   content: '';
   position: absolute;
   top: -2px; left: -2px; right: -2px; bottom: -2px;
   background: linear-gradient(135deg, #e11d48, #2563eb);
   z-index: -1;
-  border-radius: 26px 26px 0 0;
-  opacity: 0.7;
-  filter: blur(10px);
+  border-radius: 46px;
+  opacity: 0.8;
+  filter: blur(1px);
 }
 
-.lp-demo-device-screen {
+/* Internal phone screen */
+.lp-demo-phone-screen {
   background: #000;
-  border-radius: 12px;
+  border-radius: 32px;
   overflow: hidden;
-  aspect-ratio: 16/9;
   position: relative;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+  aspect-ratio: 726/1264;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
   transform: translateZ(0);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Video inside phone */
 .lp-demo-video {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
-  border-radius: inherit;
+}
+
+/* Dynamic Island */
+.lp-demo-phone-dynamic-island {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 24px;
+  background: #000;
+  border-radius: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Tiny camera lens reflex inside Dynamic Island */
+.lp-demo-phone-camera {
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #2563eb 20%, #111 80%);
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+/* Bottom home indicator bar */
+.lp-demo-phone-home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 2px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Screen reflection glass shine */
+.lp-demo-phone-reflection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.03) 30%,
+    transparent 30.1%,
+    transparent 100%
+  );
+  z-index: 9;
+  pointer-events: none;
+}
+
+/* Side button details for high tech realism */
+.lp-demo-phone-button {
+  position: absolute;
+  background: #1e1e1e;
+  border-radius: 3px;
+  z-index: 1;
+}
+
+.lp-demo-phone-button-left-1 {
+  left: -7px;
+  top: 100px;
+  width: 3px;
+  height: 40px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lp-demo-phone-button-left-2 {
+  left: -7px;
+  top: 150px;
+  width: 3px;
+  height: 40px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lp-demo-phone-button-right {
+  right: -7px;
+  top: 120px;
+  width: 3px;
+  height: 60px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .lp-demo-placeholder {
@@ -126,7 +238,7 @@
   background: linear-gradient(135deg, #1f1f23, #111);
   color: var(--lp-text-dim, #a1a1aa);
   font-family: inherit;
-  aspect-ratio: 16/9;
+  aspect-ratio: 726/1264;
 }
 
 .lp-demo-placeholder-icon {
@@ -134,25 +246,6 @@
   margin-bottom: 1rem;
   color: var(--lp-primary, #e11d48);
   opacity: 0.7;
-}
-
-.lp-demo-device-base {
-  background: linear-gradient(to bottom, #333, #1a1a1a);
-  height: 24px;
-  border-radius: 0 0 16px 16px;
-  position: relative;
-  margin-top: 0;
-  display: flex;
-  justify-content: center;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-}
-
-.lp-demo-device-notch {
-  width: 120px;
-  height: 8px;
-  background: #222;
-  border-radius: 0 0 8px 8px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
 }
 
 /* Responsive adjustments */
@@ -166,17 +259,8 @@
     margin-top: 2rem;
     padding: 0 10px;
   }
-  .lp-demo-device-frame {
-    padding: 8px 8px 12px;
-    border-radius: 16px 16px 0 0;
-    transform: none;
-  }
-  .lp-demo-device-frame::before {
-    border-radius: 18px 18px 0 0;
-  }
-  .lp-demo-device-screen {
-    border-radius: 8px;
-    aspect-ratio: 1/1; /* Make container taller on mobile */
+  .lp-demo-phone-frame {
+    transform: none !important;
   }
   .lp-demo-floating-orb {
     width: 44px;
@@ -187,14 +271,5 @@
   .lp-demo-floating-orb.right-orb { right: 20px; }
   .lp-demo-floating-orb img {
     width: 24px; height: 24px;
-  }
-  .lp-demo-device-base {
-    height: 16px;
-    border-radius: 0 0 8px 8px;
-  }
-  .lp-demo-device-notch {
-    width: 80px;
-    height: 6px;
-    border-radius: 0 0 6px 6px;
   }
 }
