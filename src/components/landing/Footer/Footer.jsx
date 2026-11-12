@@ -1,11 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ElectricCodeshorText from './ElectricCodeshorText';
 
 const Footer = ({ chatbotLogo }) => {
   return (
     <>
-      {/* Footer - Futuristic Redesign */}
+      {/* Footer - Futuristic Electric Redesign */}
       <footer className="lp-footer lp-container">
+        {/* Ambient Electric Background Shockwaves */}
+        <div className="lp-footer-ambient-shock" />
+
         <div className="lp-footer-content">
           <div className="lp-footer-brand">
             <div className="lp-nav-logo">
@@ -41,12 +45,8 @@ const Footer = ({ chatbotLogo }) => {
           </div>
         </div>
 
-        {/* Giant CODESHOR AI Text Block */}
-        <div className="lp-footer-giant-text-container">
-          <div className="lp-footer-giant-text" data-text="CODESHOR AI">
-            CODESHOR AI
-          </div>
-        </div>
+        {/* Interactive Neon Electric CODESHOR AI Typography */}
+        <ElectricCodeshorText />
 
         <div className="lp-footer-bottom">
           <p>&copy; {new Date().getFullYear()} Codeshor AI. All rights reserved.</p>

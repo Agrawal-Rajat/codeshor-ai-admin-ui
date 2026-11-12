@@ -54,9 +54,19 @@ const Demo = ({ videoUrl, chatbotLogo }) => {
             <img src={chatbotLogo} alt="Codeshor AI Orb" />
           </div>
 
-          {/* Futuristic Device Frame */}
-          <div className="lp-demo-device-frame">
-            <div className="lp-demo-device-screen">
+          {/* Futuristic Phone Device Frame */}
+          <div className="lp-demo-phone-frame">
+            {/* Side buttons for high tech realism */}
+            <div className="lp-demo-phone-button lp-demo-phone-button-left-1"></div>
+            <div className="lp-demo-phone-button lp-demo-phone-button-left-2"></div>
+            <div className="lp-demo-phone-button lp-demo-phone-button-right"></div>
+            
+            <div className="lp-demo-phone-screen">
+              {/* Dynamic Island */}
+              <div className="lp-demo-phone-dynamic-island">
+                <div className="lp-demo-phone-camera"></div>
+              </div>
+              
               {videoUrl ? (
                 <video 
                   ref={videoRef}
@@ -72,10 +82,12 @@ const Demo = ({ videoUrl, chatbotLogo }) => {
                   <p>Your Demo Video Here</p>
                 </div>
               )}
-            </div>
-            {/* Laptop Base/Keyboard visual element */}
-            <div className="lp-demo-device-base">
-              <div className="lp-demo-device-notch"></div>
+              
+              {/* Bottom Home Indicator */}
+              <div className="lp-demo-phone-home-indicator"></div>
+              
+              {/* Screen reflection highlight */}
+              <div className="lp-demo-phone-reflection"></div>
             </div>
           </div>
         </div>
